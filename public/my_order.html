@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>我的订单</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="js/mobile_init.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="js/global.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+</head>
+<body>
+	<div data-role="page" id="myOrderPage" data-theme="f"  data-dom-cache="true">
+		<script type="text/javascript">
+		function get_orders_fn(data){
+			data1=data['data'];
+            for(i=0;i<data1.length;i++){
+            	order_id=data1[i]['order_id'];
+            	ticket_id=data1[i]['ticket_id'];
+            	price=data1[i]['price'];
+            	num=data1[i]['num'];
+            	ticket_name=data1[i]['ticket_name'];
+            	merchant_name=data1[i]['merchant_name'];
+            	merchant_name_en=data1[i]['merchant_name_en'];
+            	ticket_image=data1[i]['ticket_image'];
+            	pay_type=data1[i]['pay_type'];
+            	price=Math.round(price*num*100)/100;
+            	if(data1[i]['status']==2){
+            		/*已完成*/
+            		list2='';
+                	list2+='<div id="mop_'+order_id+'" class="rectangle-panel ui-grid-f mb10" onclick="goTo(\'#myOrderDescPage'+order_id+'\',false)">';
+                	list2+=		'<div class="rectangle-panel-arrow">';
+                	list2+=			'<img src="images/order_2.png">';
+                	list2+=		'</div>';
+                	list2+=		'<h3>'+ticket_name+'</h3>';
+                	list2+=		'<p class="light-color">'+merchant_name+'</p>';
+			        list2+=		'<p class="light-color">'+merchant_name_en+'</p>';
+			        list2+=		'<div class="pull-left mr6 rectangle-panel-image"><img src='+ticket_image+'></div>';
+			        list2+=		'<p class="pull-left mt5">数量<span class="light-color">'+num+'</span></p>';
+			        list2+=		'<p class="pull-right"><span class="font20">'+price+'</span><span class="light-color">RMB</span></p>';
+			        list2+='</div>';
+                	$('#control-content  #my-order-2').append(list2)
+                }else if(data1[i]['status']==4){
+                	/*已失效*/
+                	list4='';
+                	list4+='<div id="mop_'+order_id+'" class="rectangle-panel ui-grid-f mb10" onclick="goTo(\'#myOrderDescPage'+order_id+'\',false)">';
+                	list4+=		'<div class="rectangle-panel-arrow">';
+                	list4+=			'<img src="images/order_4.png">';
+                	list4+=		'</div>';
+                	list4+=		'<h3>'+ticket_name+'</h3>';
+                	list4+=		'<p class="light-color">'+merchant_name+'</p>';
+			        list4+=		'<p class="light-color">'+merchant_name_en+'</p>';
+			        list4+=		'<div class="pull-left mr6 rectangle-panel-image"><img src='+ticket_image+'></div>';
+			        list4+=		'<p class="pull-left mt5">数量<span class="light-color">'+num+'</span></p>';
+			        list4+=		'<p class="pull-right"><span class="font20">'+price+'</span><span class="light-color">RMB</span></p>';
+			        list4+=		'<div class="clearfix"></div>';
+		            list4+=		'<div class="pull-right rectangle-panel-btn rectangle-panel-btn-4">';
+		            list4+=			'<a  class="ui-link ui-btn ui-btn-inline ui-corner-all" href="#" data-role="button" onclick="myOrderCancelDel('+order_id+',4,'+pay_type+',this,event)" data-inline="true">删除</a>';
+		            list4+=		'</div>';
+			        list4+='</div>';
+                	$('#control-content  #my-order-4').append(list4);
+                }else if(data1[i]['status']==0){
+                	/*未付款*/
+                	list0='';
+                	list0+='<div id="mop_'+order_id+'" class="rectangle-panel ui-grid-f mb10" onclick="goTo(\'#myOrderDescPage'+order_id+'\',false)">';
+                	list0+=		'<div class="rectangle-panel-arrow">';
+                	list0+=			'<img src="images/order_0.png">';
+                	list0+=		'</div>';
+                	list0+=		'<h3>'+ticket_name+'</h3>';
+                	list0+=		'<p class="light-color">'+merchant_name+'</p>';
+			        list0+=		'<p class="light-color">'+merchant_name_en+'</p>';
+			        list0+=		'<div class="pull-left mr6 rectangle-panel-image"><img src='+ticket_image+'></div>';
+			        list0+=		'<p class="pull-left mt5">数量<span class="light-color">'+num+'</span></p>';
+			        list0+=		'<p class="pull-right"><span class="font20">'+price+'</span><span class="light-color">RMB</span></p>';
+			        list0+=		'<div class="clearfix"></div>';
+		            list0+=		'<div class="pull-right rectangle-panel-btn rectangle-panel-btn-0">';
+		            list0+=			'<a class="ui-link ui-btn ui-btn-inline ui-corner-all" href="#" data-role="button" onclick="my_order_pay('+num+',\''+ticket_name+'\','+pay_type+','+price+','+ticket_id+',event)" data-inline="true">付款</a>';
+			       	list0+=			'<a class="ui-link ui-btn ui-btn-inline ui-corner-all" href="#" data-role="button" onclick="myOrderCancelDel('+order_id+',0,'+pay_type+',this,event)" data-inline="true">取消</a>';
+			       	list0+=		'</div>';
+			        list0+='</div>';
+                	$('#control-content  #my-order-0').append(list0)
+                }else if(data1[i]['status']==1){
+                	/*已取消*/
+                	list1='';
+        			list1+=	'<div id="mop_'+order_id+'" class="rectangle-panel ui-grid-f mb10" onclick="goTo(\'#myOrderDescPage'+order_id+'\',false)">';
+                	list1+=		'<div class="rectangle-panel-arrow">';
+                	list1+=			'<img src="images/order_1.png">';
+                	list1+=		'</div>';
+                	list1+=		'<h3>'+ticket_name+'</h3>';
+                	list1+=		'<p class="light-color">'+merchant_name+'</p>';
+			        list1+=		'<p class="light-color">'+merchant_name_en+'</p>';
+			        list1+=		'<div class="pull-left mr6 rectangle-panel-image"><img src='+ticket_image+'></div>';
+			        list1+=		'<p class="pull-left mt5">数量<span class="light-color">'+num+'</span></p>';
+			        list1+=		'<p class="pull-right"><span class="font20">'+price+'</span><span class="light-color">RMB</span></p>';
+			        list1+=		'<div class="clearfix"></div>';
+		            list1+=		'<div class="pull-right rectangle-panel-btn rectangle-panel-btn-1">';
+		            list1+=			'<a  class="ui-link ui-btn ui-btn-inline ui-corner-all" href="#" data-role="button" onclick="myOrderCancelDel('+order_id+',1,'+pay_type+',this,event)" data-inline="true">删除</a>';
+		            list1+=		'</div>';
+			        list1+=	'</div>';
+                	$('#control-content  #my-order-1').append(list1)
+                }
+            }
+		}
+		$('#myOrderPage').live('pageinit',function(){
+			outside=localStorage.getItem('outside')
+			auth_token=localStorage.getItem('auth_token')
+			if(outside==null){outside=0}
+			data = {
+                'status'   : '',
+                'outside'       :outside,
+                'return_count'  : 5,
+                'start_index'   : 0,
+                'auth_token'    : auth_token
+            };
+            if (auth_token == ''||auth_token==null) {
+                window.location.href='sign.html'
+            } else {
+	            $.ajax({
+	                type: 'GET',
+	                url:'order/getOrders',
+	                data:data,
+	                dataType: 'json',
+	                success:function(data){
+	                	translate(data['return_code'],get_orders_fn,data)
+	                }
+	            })
+			}
+        })
+		$(document).bind('pagebeforechange',function(event,data){
+            var url=$.mobile.path.parseUrl(data.toPage).hash;
+            if(url!=undefined&&url.length>16&&url.substring(0,16)=='#myOrderDescPage'){
+                var id=url.substring(16);
+                $.ajax({
+                    type: 'GET',
+                    url:'/order/getDetail',
+                    data:{'order_id':id,'auth_token':auth_token},
+                    dataType: 'json',
+                    success:function(data){
+                        if(data['msg']=='success'){
+                            data1=data['data'][0]
+                            if(data1['status']==0){
+                            	$('#myOrderDescPage .my-order-desc-page-del').hide();
+                            	$('.my_order_cancel_order').attr('onclick','cancelOrder('+id+','+data1["pay_type"]+')')
+                            	$('#myOrderDescPage [data-role="footer"]').show();
+                            	$('#my_order_desc_payment_btn').attr('onclick','my_order_pay('+data1['num']+',\''+data1['ticket_name']+'\','+data1['pay_type']+','+data1['price']+','+data1['ticket_id']+',event)')
+                            	$('#myOrderDescPage .my_order_status').html('未付款');
+                            }else if(data1['status']==1){
+                            	$('.my-order-desc-page-del').attr('onclick','delteOrder('+id+','+data1["pay_type"]+')')
+                            	$('#myOrderDescPage .my-order-desc-page-del').show();
+                            	$('#myOrderDescPage [data-role="footer"]').hide();
+                            	$('#myOrderDescPage .my_order_status').html('已取消');
+                            }else if(data1['status']==2){
+                            	$('#myOrderDescPage .my-order-desc-page-del').hide();
+                            	$('#myOrderDescPage [data-role="footer"]').hide();
+                            	$('#myOrderDescPage .my_order_status').html('已完成');
+                            }else{
+                            	$('.my-order-desc-page-del').attr('onclick','delteOrder('+id+','+data1["pay_type"]+')')
+                            	$('#myOrderDescPage .my-order-desc-page-del').show();
+                            	$('#myOrderDescPage [data-role="footer"]').hide();
+                            	$('#myOrderDescPage .my_order_status').html('无效订单');
+                            }
+                            $('#myOrderDescPage .my_order_id').html(data1['order_no']);
+                            $('#myOrderDescPage .my_order_num').html(data1['num']);
+                            $('#myOrderDescPage .my_order_price').html(Math.round(data1['price']*data1['num']*100)/100);
+                            $('#myOrderDescPage .my_order_time').html(data1['order_time']);
+                            if(data1['pay_type']==1){
+                            	$('#myOrderDescPage .my_order_pay_type').html('支付宝支付');
+                            }else{
+                            	$('#myOrderDescPage .my_order_pay_type').html('网银支付');
+                            }
+                            $('#myOrderDescPage .my_order_ticket_image').html('<img src="'+data1['ticket_image']+'" alt="" width="120" height="90">');
+                            $('#myOrderDescPage .my_order_ticket_name').html(data1['ticket_name']);
+                            $('#myOrderDescPage .my_order_merchant_name').html(data1['merchant_name']);
+                            $('#myOrderDescPage .my_order_ticket_id a').attr('href','card.html?card='+data1['ticket_id'])
+                        }
+                    },
+                })
+                $.mobile.changePage($('#myOrderDescPage'),{dataUrl:data.toPage,'transition':'slide'});
+                event.preventDefault()
+            }
+        })
+		</script>
+	    <div data-role="header" data-theme="f" data-position="fixed">
+	        <div><a href="/" data-ajax="false" data-transition="slide" data-direction="reverse" class="wy-header-rl wy-header-left"><img class="left_navbar" src="images/btn_topbar_meun.png"></a></div>
+	        <h1>我的订单</h1>
+	    </div><!-- /header -->
+	    <div data-role="content" class="gray-back pd10">
+	        <div data-role="controlgroup" data-type="horizontal" class="horizontal-button-group">
+	            <label for="allOrder">全部</label>
+	            <input type="radio" id="allOrder" name="status" value="" checked onclick="radio_click('')">
+	            <label for="noPayOrder">未付款</label>
+	            <input type="radio" id="noPayOrder" name="status" value="0" onclick="radio_click(0)">
+	            <label for="expiredOrder">已失效</label>
+	            <input type="radio" id="expiredOrder" name="status" value="4" onclick="radio_click(4)">
+	            <label for="cancledOrder">已取消</label>
+	            <input type="radio" id="cancledOrder" name="status" value="1" onclick="radio_click(1)">
+	            <label for="completedOrder">已完成</label>
+	            <input type="radio" id="completedOrder" name="status" value="2" onclick="radio_click(2)">
+	        </div>
+	        <div id="control-content">
+	        	<div id="my-order-0">
+	        	</div>
+	        	<div id="my-order-4">
+	        	</div>
+	        	<div id="my-order-1">
+	        	</div>
+	        	<div id="my-order-2">
+	        	</div>
+		    </div>
+	    </div>
+	    <script type="text/javascript">
+			function radio_click(type){
+				if(typeof(type)=='string'){
+					$("#my-order-0").show();
+					$("#my-order-4").show();
+					$("#my-order-1").show();
+					$("#my-order-2").show();
+				}else{
+					if(type==0){
+						$("#my-order-0").show();
+						$("#my-order-4").hide();
+						$("#my-order-1").hide();
+						$("#my-order-2").hide();
+					}else if(type==4){
+						$("#my-order-4").show();
+						$("#my-order-0").hide();
+						$("#my-order-1").hide();
+						$("#my-order-2").hide();
+					}else if(type==1){
+						$("#my-order-1").show();
+						$("#my-order-4").hide();
+						$("#my-order-0").hide();
+						$("#my-order-2").hide();
+					}else if(type==2){
+						$("#my-order-2").show();
+						$("#my-order-4").hide();
+						$("#my-order-1").hide();
+						$("#my-order-0").hide();
+					}
+				} 
+			}
+			function delteOrder(order_id,pay_type){
+				if(confirm("确定要删除这个订单么?")){
+					$.ajax({
+	                    type: 'GET',
+	                    url:'/order/deleteOrder',
+	                    data:{'order_id':order_id,'pay_type':pay_type,'auth_token':auth_token},
+	                    dataType: 'json',
+	                    success:function(data){
+	                       $.mobile.changePage('my_order.html',{'transition':'slide','reverse':true});
+	                       $('#mop_'+order_id).remove()
+	                    }
+	                })
+				}
+			}
+			function cancelOrder(order_id,pay_type){
+				if(confirm("确定要取消这个订单么?")){
+					$.ajax({
+	                    type: 'GET',
+	                    url:'/order/cancelOrder',
+	                    data:{'order_id':order_id,'pay_type':pay_type,'auth_token':auth_token},
+	                    dataType: 'json',
+	                    success:function(data){
+	                       	$('.my-order-desc-page-del').attr('onclick','delteOrder('+order_id+','+pay_type+')')
+                        	$('#myOrderDescPage .my-order-desc-page-del').show();
+                        	$('#myOrderDescPage [data-role="footer"]').hide();
+                        	$('#myOrderDescPage .my_order_status').html('已取消');
+                        	$('#mop_'+order_id+' .rectangle-panel-arrow').html('<img src="images/order_1.png">');
+                        	$('#mop_'+order_id+' .rectangle-panel-btn').removeClass('rectangle-panel-btn-0').addClass('rectangle-panel-btn-1');
+							$('#mop_'+order_id+' .rectangle-panel-btn').empty().html('<a  class="ui-link ui-btn ui-btn-inline ui-corner-all" href="#" data-role="button" onclick="myOrderCancelDel('+order_id+',0,'+pay_type+',this,event)" data-inline="true">删除</a>');
+	                    }
+	                })
+				}
+			}
+			function myOrderCancelDel(order_id,status,pay_type,obj,event){
+				if($(obj).text()=='取消'){
+					if(confirm("确定要取消这个订单么?")){
+						$.ajax({
+		                    type: 'GET',
+		                    url:'/order/cancelOrder',
+		                    data:{'order_id':order_id,'pay_type':pay_type,'auth_token':auth_token},
+		                    dataType: 'json',
+		                    success:function(data){
+		                        $(obj).parent().siblings('.rectangle-panel-arrow').html('<img src="images/order_1.png">');
+								$(obj).parent().removeClass('rectangle-panel-btn-0').addClass('rectangle-panel-btn-1');
+								$(obj).parent().empty().html('<a  class="ui-link ui-btn ui-btn-inline ui-corner-all" href="#" data-role="button" onclick="myOrderCancelDel('+order_id+',0,'+pay_type+',this,event)" data-inline="true">删除</a>');
+		                    }
+		                })
+					}
+				}else{
+					if(status==0){
+						if(confirm("确定要删除这个订单么?")){
+							delete_order(order_id,status,pay_type,obj)
+						}
+					}else if(status==4){
+						if(confirm("确定要删除这个已失效订单么?")){
+							delete_order(order_id,status,pay_type,obj)
+						}
+					}else{
+						if(confirm("确定要删除这个已取消订单么?")){
+							delete_order(order_id,status,pay_type,obj)
+						}
+					}
+				}
+				event.cancelBubble=true;
+			}
+			function delete_order(order_id,status,pay_type,obj){
+				$.ajax({
+                    type: 'GET',
+                    url:'/order/deleteOrder',
+                    data:{'order_id':order_id,'pay_type':pay_type,'auth_token':auth_token},
+                    dataType: 'json',
+                    success:function(data){
+                       $(obj).parent().parent().remove()
+                    }
+                })
+			}
+			function my_order_pay(num,ticket_name,pay_type,price,ticket_id,event){
+				$.ajax({
+                    type: 'post',
+                    url: '/order/order',
+                    data: {
+                        'ticket_id'     : ticket_id,
+                        'auth_token'    : auth_token,
+                        'price'         : price,
+                        'num'           : num,
+                        'pay_type'      : pay_type,
+                        'order_name'    : ticket_name,
+                        'outside'       :outside,
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data['msg'] == 'success') {
+                            var pay_type = data['data'][0]['pay_type'],
+                                pay_data = data['data'][0]['pay_data'];
+                            if(pay_type == 1){
+                                var div = $('<div style="display:none"></div>');
+                                div.empty();
+                                div.appendTo('document');
+                                pay_data = pay_data.replace("<script>document.forms['alipaysubmit'].submit();<\/script>", '');
+                                $(pay_data).appendTo(div);
+                                $('form', div).submit();
+                            }else{
+                                window.location.href='uppay://uppayservice/?style=token&paydata='+pay_data
+                            }
+                        }
+                    }
+                })
+				event.cancelBubble=true;
+			}
+		</script>
+	</div>
+	<div data-role="page" id="myOrderDescPage" class="general-page" data-theme="f"  data-dom-cache="true">
+	    <div data-role="header" data-theme="f" data-position="fixed">
+	        <a href="#" data-rel="back" data-corners="false"><img class="left-normal" src="images/return.png"></a>
+	        <h1>订单详情</h1>
+	        <a href="#"  class="my-order-desc-page-del" data-shadow="false"><img class="right-normal" src="images/del.png"></a>
+	    </div>
+	    <div data-role="content" class="gray-back">
+	        <div class="panel-title">订单信息</div>
+	        <div class="white-panel ui-grid-1-3 list-line">
+	             <div class="ui-block-a">订单号码</div>
+	             <div class="ui-block-b text-right"><span class="font16 my_order_id"></span></div>
+	        </div>
+	        <div class="white-panel ui-grid-1-3 list-line">
+	             <div class="ui-block-a">订单状态</div>
+	             <div class="ui-block-b text-right"><span class="my_order_status"></span></div>
+	        </div>
+	        <div class="white-panel ui-grid-1-3 list-line">
+	             <div class="ui-block-a">数量</div>
+	             <div class="ui-block-b text-right"><span class="font16 my_order_num"></span></div>
+	        </div>
+	        <div class="white-panel ui-grid-1-3 list-line">
+	             <div class="ui-block-a">订单金额</div>
+	             <div class="ui-block-b text-right"><span class="font16 my_order_price"></span><span class="light-color">元</span></div>
+	        </div>
+	        <div class="white-panel ui-grid-1-3 list-line">
+	             <div class="ui-block-a">下单时间</div>
+	             <div class="ui-block-b text-right"><span class="my_order_time"></span></div>
+	        </div>
+	        <div class="white-panel ui-grid-1-3 list-line">
+	             <div class="ui-block-a">支付方式</div>
+	             <div class="ui-block-b text-right"><span class="my_order_pay_type"></span></div>
+	        </div>
+	        <div class="white-panel list-line">
+	             <div class="pull-left mr6 my_order_ticket_image"></div>
+	             <div class="clearfix order-desc">
+	                <p class="my_order_ticket_name"></p>
+	                <p class="my_order_merchant_name light-color"></p>
+	                <p class="text-right my_order_ticket_id mt20">
+	                    <a href="#" data-ajax="false" data-role="button" data-shadow="false" data-inline="true">产品详情</a>
+	                </p>
+	            </div>
+	        </div>
+	    </div>
+	    <div data-role="footer" data-position="fixed">
+	        <div class="ui-grid-a grid-block">
+	            <div class="ui-block-a"><a href="#" class="large-btn my_order_cancel_order" data-role="button" data-theme="b">取消订单</a></div>
+	            <div class="ui-block-b"><a href="javascript:void(0);" id="my_order_desc_payment_btn" data-ajax="false" class="large-btn" data-role="button" data-theme="b">付款</a></div>
+	        </div>
+	    </div>
+	</div>
+	<div class="ui-loader-background"> </div>
+</body>
+</html>

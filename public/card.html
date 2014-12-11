@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>产品详情</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+<link href="css/photoswipe.css" type="text/css" rel="stylesheet" />
+<style type="text/css">
+    div.gallery-row:after { clear: both; content: "."; display: block; height: 0; visibility: hidden; }
+    div.gallery-item { float: left; width: 50%; }
+    div.gallery-item a { display: block; margin: 5px; border: 1px solid #3c3c3c; }
+    div.gallery-item img { display: block; width: 100%; height: auto; }
+    #Gallery1 .ui-content, #Gallery2 .ui-content { overflow: hidden; }
+</style>
+
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+<script type="text/javascript" src="js/photoslide/klass.min.js"></script>
+<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="js/mobile_init.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="js/global.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+
+<script type="text/javascript" charset="utf-8" src="js/photoslide/code.photoswipe-3.0.5.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="js/photoslide/hammer.js"></script>
+<script type="text/javascript" charset="utf-8" src="js/photoslide/jquery.hammer.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('div.gallery-page').live('pageshow', function(e){
+            $("div.gallery a", e.target).photoSwipe();
+            return true;
+        })   
+    });
+</script>
+</head>
+<body>
+    <div data-role="page" id="cardPage" class="general-page" data-dom-cache="true">
+        <script type="text/javascript">
+        $('#cardPage').live('pagebeforeshow',function(event, data){
+            outside=localStorage.getItem('outside')
+            if(outside==0||outside==null){
+              $('#card_look_map').hide();
+              $('#outside_shopping').hide();
+              $('#cardPage .outside__to_order').text('立即预订')
+            }else{
+                $('#outside_book').hide();
+            }
+            if(window.location.search){
+                list=getUrlParam(decodeURI(window.location.search))
+                id = list[0];
+                city_code=list[1];
+                $.ajax({
+                    type: 'GET',
+                    url: '/ticket/getDetail',
+                    data: {'id': id,'auth_token': localStorage.getItem('auth_token')},
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data['msg'] == 'success') {
+                            var data1 = data['data'][0];
+                            array_images=data1['merchant']["images"]
+                            if(data1['iscollect']==0){
+                                $('#cardPage .collect_star').removeClass('active').attr({'onClick':'collect_star('+id+')','title':'添加收藏'});
+                            }else{
+                                $('#cardPage .collect_star').addClass('active').attr({'onClick':'cancel_collect_star('+id+')','title':'取消收藏'});
+                            }
+                            $('#cardPage .card-phone-frame').html('<a href="#Gallery1"><img src="' + array_images[0] + '" alt="" width="258" height="172"></a>');
+                            $('#cardPage .price_number').html(data1['price']);
+                            $('#cardPage .card_name').html(data1['name']);
+                            $('#cardPage .card_equal_price').html(data1['symbol'] + ' ' + data1['equal_price']);
+                            $('#cardPage .card_origin_price').html(data1['symbol'] + ' ' + data1['origin_price']);
+                            $('#cardPage .card_merchant_name').html(data1['merchant']['name']);
+                            $('#cardPage .card_merchant_name_en').html(data1['merchant']['name_en']);
+                            $('#cardPage .card_name_local').html(data1['merchant']['name_local'])
+                            $('#cardPage .card_tips').html(data1['tips'].replace(/\n/g,'<br/>'));
+                            $('#cardPage .card_phone').html(data1['merchant']['phone']);
+                            $('#cardPage .card_address').html(data1['merchant']['address']);
+                            $('#cardPage .card_merchant_info').html(data1['merchant']['description']);
+                            $('#cardPage .product_to_order').attr('href', 'order.html?orderPayment=' +id+'&price='+data1['price']+'&card_name='+data1['name']);
+                            $('#cardPage .card_merchant_id').attr('href','merchant_desc.html?merchant_id='+data1['merchant']['id']+'&city_code='+city_code);
+                            $('#cardPage #card_look_map').attr('href','map.html?latitude='+data1['merchant']['latitude']+'&longitude='+data1['merchant']['longitude']+'&merchant_name='+data1['merchant']['name']+'&merchant_name_en='+data1['merchant']['name_en']+'&address='+data1['merchant']['address']);
+                            glist='';
+                            length=array_images.length
+                            for(i=0;i<length;i++){
+                                glist+='<div class="gallery-item">'
+                                glist+=     '<a href='+array_images[i]+' rel="external"><img src='+array_images[i]+' alt='+i+'/'+length+' /></a>'
+                                glist+='</div>'
+                            }
+                            $('.gallery-row').empty().append(glist)
+                        }
+                    }
+                })
+            }
+        })
+        </script>
+        <div data-role="header" data-theme="f" data-position="fixed" data-tap-toggle="false">
+            <a href="#" data-rel="back" data-corners="false"><img class="left-normal" src="images/return.png"></a>
+            <h1>卡券详情</h1>
+            <a href="#" data-rel="popup" data-position-to="window" class="collect_star" data-role="none"></a>
+        </div>
+        <div data-role="content" class="card-content overflow-hidden">   
+            <div class="card-phone">
+                <div class="card-phone-frame"></div>
+            </div> 
+            <div class="card-info">
+                <div class="white-panel card-price mb10">
+                   <span class="font30 price_number"></span><span class="light-color">元</span>
+                </div>
+                <div class="white-panel  mb10">
+                    <h3 class="card_name"></h3>
+                    <div class="ui-grid-f">
+                        <div class="ui-block-a"><p>产品价 <span class="light-color card_origin_price"></span></p><p>可抵用 <span class="light-color card_equal_price"></span></p></div>
+                        <div class="ui-block-b"><a href="http://www.usd-cny.com/" rel="external" data-role="button">查看汇率</a></div>
+                    </div>
+                    <p style="border-top:1px solid #ddd;margin-top:10px;padding-top:10px;" class="light-color card_merchant_info"></p>
+                </div>
+                
+                <div class="white-panel ui-grid-f list-line">
+                    <div class="ui-block-a">
+                        <label class="pull-left">商家</label>
+                        <div class="pull-left">
+                            <p class="light-color card_merchant_name"></p>
+                            <p class="light-color card_merchant_name_en"></p>
+                            <p class="light-color card_name_local">xx</p>
+                        </div>
+                    </div>
+                    <div class="ui-block-b">
+                        <a class="card_merchant_id" href="#" data-ajax="false" data-role="button">商家详情</a>
+                    </div>
+                </div>
+                <div class="white-panel ui-grid-f list-line" id="outside_phone">
+                     <div class="ui-block-a"><label class="pull-left">电话</label><p class="pull-left light-color card_phone"></p></div>
+                     <!-- <div class="ui-block-b"><a href="#" data-role="button">立即联系</a></div> -->
+                </div>
+                <div class="white-panel ui-grid-f mb10" id="outside_address">
+                     <div class="ui-block-a"><label class="pull-left">地址</label><p class="pull-left light-color card_address"></p></div>
+                     <div class="ui-block-b"><a href="#" id="card_look_map" data-ajax="false" data-role="button">查看地图</a></div>
+                </div>
+                <div class="white-panel list-line last" id="outside_book">
+                    <h5>预订须知</h5>
+                    <p class="light-color card_tips"></p>
+                </div>
+
+                <div class="white-panel list-line last" id="outside_shopping">
+                    <h5>购买须知</h5>
+                    <p class="light-color card_tips"></p>
+                </div>
+            </div>  
+        </div>
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+            <div class="ui-grid-a grid-block">
+                 <div class="ui-block-a"><a href="service.html" data-ajax="false" data-role="button" data-theme="b"><img src="images/kefu.png" width="21" height="25"> 联系客服</a></div>
+                 <div class="ui-block-b"><a class="product_to_order" data-ajax="false" href="#" data-role="button" data-theme="b"><img src="images/cart.png" width="20" height="23"> <span class="outside__to_order">立即购买</span></a></div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            auth_token=localStorage.getItem('auth_token')
+            function collect_star_fn(id){
+                $('#cardPage .collect_star').addClass('active').attr({'onClick':'cancel_collect_star('+id+')','title':'取消收藏'});
+                myAlert('收藏成功')
+            }
+            function cancel_collect_star_fn(id){
+                $('#cardPage .collect_star').removeClass('active').attr({'onClick':'collect_star('+id+')','title':'添加收藏'});
+                myAlert('取消收藏成功')
+            }
+            function collect_star(id){
+                if (auth_token == ''||auth_token==null) {
+                   window.location.href='sign.html'
+                } else {
+                    $.ajax({
+                        type: 'post',
+                        url: '/collect/addCollect',
+                        data: {'ticket_id':id,'auth_token':auth_token},
+                        dataType: 'json',
+                        success: function(data) {
+                            translate(data['return_code'],collect_star_fn,id)
+                        }
+                    })
+                }
+            }
+            function cancel_collect_star(id){
+               if (auth_token == ''||auth_token==null) {
+                    window.location.href='sign.html'
+                } else {
+                    $.ajax({
+                        type: 'post',
+                        url: '/collect/cancelCollect',
+                        data: {'collect_id':id,'auth_token':auth_token},
+                        dataType: 'json',
+                        success: function(data) {
+                            translate(data['return_code'],cancel_collect_star_fn,id)
+                        }
+                    })
+                }
+            } 
+        </script>
+    </div>
+    <div data-role="page" id="Gallery1" class="general-page gallery-page" data-theme="b"  data-dom-cache="true" >
+        <div data-role="header" data-theme="f" data-position="fixed" data-tap-toggle="false">
+            <a href="#" data-rel="back" data-corners="false"><img class="left-normal" src="images/return.png"></a>
+            <h1>商家相册</h1>
+        </div>
+        <div data-role="content">
+           <div class="gallery">
+                <div class="gallery-row"> 
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

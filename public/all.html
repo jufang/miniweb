@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>主页</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+<script type="text/javascript" charset="utf-8" src="js/iscroll.js"></script>
+<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="js/global.js"></script>
+</head>
+<body class="cbp-spmenu-push homepage">
+<div data-role="page" id="page" class="firstpage">
+    <input type="hidden" name="order_by" value="0">
+	<div data-role="header" data-theme="f" >
+        <nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" id="cbp-spmenu-s1">
+            <div class="sidenav">
+                <p class="userpic">
+                    <img src="images/icon_head_default.png">
+                </p>
+                <p class="mb20 userinfo"> 
+                    <a  href="#" onClick="goTo('sign_register.html#registerPage')">注册</a>
+                    <span class="divider">|</span>
+                    <a href="#" onClick="goTo('sign_register.html')">登录</a>
+                </p>
+            </div>
+            <a data-src="page" href="javascript:void(0);"><img src="images/1.png">首页</a>
+            <a href="javascript:void(0);" data-src="serviceCenterPage"><img src="images/2.png">客服</a>
+            <a href="#"><img src="images/3.png">个人中心</a>
+            <a href="javascript:void(0);" data-src="myTicket"><img src="images/4.png">我的券</a>
+            <a data-src="myOrderPage" href="javascript:void(0);"><img src="images/5.png">我的订单</a>
+            <a href="#"><img src="images/6.png">我的消息</a>
+            <a href="#"><img src="images/7.png">我的收藏</a>
+            <a href="#"><img src="images/8.png">系统设置</a>
+        </nav>
+		<div><a href="#" id="showLeftPush" class="wy-header-rl wy-header-left"><img class="left_navbar" src="images/btn_topbar_meun.png"></a></div>
+		<h1>澳大利亚</h1>
+        <div class="dropdown">
+            <a href="#" data-toggle="dropdown" data-target="#" class="dropdown-toggle wy-header-rl wy-header-right"><img class="right_dropdown" src="images/btn_topbar_more.png"></a>
+            <ul id="_order_by" class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">
+                <li><a href="" item-order="0">默认排序</a></li>
+                <li><a href="" item-order="2">价格从低到高</a></li>
+                <li><a href="" item-order="1">价格从高到低</a></li>
+            </ul>
+        </div>
+	</div><!-- /header -->
+    <div data-role="content">
+        <input type="hidden" id="_auth_token" value="">	
+        <div data-ride="carousel" class="carousel slide" id="carousel">
+          <ol class="carousel-indicators">
+            <li class="active" data-slide-to="0" data-target="#carousel"></li>
+            <li data-slide-to="1" data-target="#carousel"></li>
+            <li data-slide-to="2" data-target="#carousel"></li>
+          </ol>
+          <div class="carousel-inner">
+            <div class="item active">
+              <img alt="First slide" src="images/product.png" width="100%" height="100%">
+            </div>
+            <div class="item">
+              <img alt="Second slide" src="images/product.png" width="100%" height="100%">
+            </div>
+            <div class="item">
+              <img alt="Third slide" src="images/product.png" width="100%" height="100%">
+            </div>
+          </div>
+        </div>
+        <div class="loadcontent" id="_datalazyload">
+            <ul data-role="listview"> 
+            </ul>
+        </div>
+        <div class="dropdown-shadow dropdown-show" style="display:none;"></div>
+    </div>
+</div>
+<div data-role="page" id="pageTemplate" class="general-page">
+    <div data-role="header" data-theme="f" data-position="fixed" data-tap-toggle="false">
+        <a href="#page"><img class="left-normal" src="images/return.png"></a>
+        <h1>卡券详情</h1>
+        <a href="#"  class=""><img class="right-normal" src="images/star.png"></a>
+    </div><!-- /header -->
+    <div data-role="content" class="card-content">   
+        <div class="card-phone">
+            <div class="card-phone-frame"></div>
+        </div> 
+        <div class="card-info">
+            <div class="white-panel card-price mb10">
+               <span class="font30 price_number"></span><span class="light-color">元</span>
+            </div>
+            <div class="white-panel ui-grid-f mb10">
+                <h3 class="card_name"></h3>
+                 <div class="ui-block-a"><p>产品价 <span class="light-color card_origin_price"></span></p><p>可抵用 <span class="light-color card_equal_price"></span></p></div>
+                 <div class="ui-block-b"><a href="#" data-role="button">查看汇率</a></div>
+            </div>
+            <div class="white-panel ui-grid-f list-line">
+                 <div class="ui-block-a"><label class="pull-left">商家</label><div class="pull-left"><p class="light-color card_merchant_name"></p><p class="light-color card_merchant_name_en"></p></div></div>
+                 <div class="ui-block-b"><a href="#" data-role="button">商家详情</a></div>
+            </div>
+            <div class="white-panel ui-grid-f list-line">
+                 <div class="ui-block-a"><label class="pull-left">电话</label><p class="pull-left light-color card_phone"></p></div>
+                 <div class="ui-block-b"><a href="#" data-role="button">立即联系</a></div>
+            </div>
+            <div class="white-panel ui-grid-f mb10">
+                 <div class="ui-block-a"><label class="pull-left">地址</label><p class="pull-left light-color card_address"></p></div>
+                 <div class="ui-block-b"><a href="#" data-role="button">查看地图</a></div>
+            </div>
+            <div class="white-panel list-line last">
+                <h5>购买须知</h5>
+                <p class="light-color card_tips"></p>
+            </div>
+        </div>    
+    </div>
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+        <div class="ui-grid-a grid-block">
+             <div class="ui-block-a"><a href="#" data-role="button" data-theme="b"><img src="images/kefu.png" width="21" height="25"> 联系客服</a></div>
+             <div class="ui-block-b"><a class="product_to_order" href="#" data-role="button" data-theme="b"><img src="images/cart.png" width="20" height="23"> 立即购买</a></div>
+        </div>
+    </div>
+</div>
+<div data-role="page" id="orderPayment" class="general-page"  data-theme="f">
+    <div data-role="header" data-theme="f" data-position="fixed">
+        <a href="#page"><img class="left-normal" src="images/return.png"></a>
+        <h1>订单支付</h1>
+    </div><!-- /header -->
+    <div data-role="content" class="card-content">   
+        <div class="panel-title">订单信息</div>
+        <div class="white-panel ui-grid-1-3 list-line">
+            <div class="ui-block-a">商品名称</div>
+            <div class="ui-block-b pay_product_name text-left" style="font-size:16px;font-weight:bold;"></div>
+        </div>
+        <div class="white-panel ui-grid-1-3 list-line">
+             <div class="ui-block-a">单价</div>
+             <div class="ui-block-b text-right"><span class="font30 pay_product_price"></span><span class="light-color">RMB</span></div>
+        </div>
+        <div class="white-panel ui-grid-1-3 list-line">
+            <div class="ui-block-a">数量</div>
+            <div class="ui-block-b mini_qty_add">
+                <a href="javascript:void(0)" class="plus clearfix" data-role="button">+</a>
+                <input type="text" value="1" name="qty" style="width:60px;border:1px solid #ccc;" onkeyup="value=value.replace(/[^\d]/g,'')" class="clearfix qty">
+                <a href="javascript:void(0)" class="minus clearfix" data-role="button" style="background-color:#ccc">-</a>
+            </div>
+        </div>
+        <div class="white-panel ui-grid-1-3">
+              <div class="ui-block-a">应付金额</div>
+             <div class="ui-block-b text-right"><span class="font30 text_red show_pay_price"></span><span class="light-color">RMB</span></div>
+        </div>
+        <div class="panel-title">支付方式</div>
+        <div class="white-panel ui-grid-f list-line">
+            <label for="zhifubao">支付宝</label>
+            <input type="radio" id="zhifubao" name="paytype" value="1" checked>
+        </div>
+        <div class="white-panel ui-grid-f list-line">
+            <label for="wangyin">网银</label>
+            <input type="radio" id="wangyin" name="paytype" value="2">
+            <!-- <div class="ui-block-a">网银</div>
+            <div class="ui-block-b">
+                <input type="radio" name="paytype" value="2">
+            </div> -->
+        </div>
+    </div>    
+    <div data-role="footer" data-position="fixed">
+        <a href="#" data-role="button" class="large-btn" id="comfirm_payment_btn">确认支付</a>
+    </div>
+</div>
+<div data-role="page" id="paymentSuccessPage" class="general-page" data-theme="f">
+    <div data-role="header" data-theme="f" data-position="fixed">
+        <a href="#page"><img class="left-normal" src="images/return.png"></a>
+        <h1>支付成功</h1>
+    </div><!-- /header -->
+    <div data-role="content" class="general-content">
+        <div class="col-sm-12 mb10">
+            <div class="thumbnail"><img src="images/pay_success.png" ></div>
+        </div> 
+        <h1 class="text-center light-color">订单支付成功！</h1>
+        <div style="margin:0 25%;"><p class="text-center mt30" ><a href="" class="button-circle" data-role="button">查看已购买产品</a></p></div>
+    </div>
+</div>
+<div data-role="page" id="paymentFailPage" class="general-page" data-theme="f">
+    <div data-role="header" data-theme="f" data-position="fixed">
+        <a href="#page"><img class="left-normal" src="images/return.png"></a>
+        <h1>支付失败</h1>
+    </div><!-- /header -->
+    <div data-role="content" class="general-content">
+        <div class="col-sm-12 mb10">
+            <div class="thumbnail"><img src="images/pay_fail.png" ></div>
+        </div> 
+        <h1 class="text-center light-color">订单支付失败！</h1>
+        <div style="margin:0 25%;"><p class="text-center" ><a href="" class="button-circle" data-role="button">联系客服帮忙解决</a></p></div>
+    </div>
+</div>
+<div data-role="page" id="myOrderPage" data-theme="f">
+    <div data-role="header" data-theme="f" >
+        <div><a href="#" class="toShowLeftPush wy-header-rl wy-header-left"><img class="left_navbar" src="images/btn_topbar_meun.png"></a></div>
+        <h1>我的订单</h1>
+    </div><!-- /header -->
+    <div data-role="content" class="gray-back pd10">
+        <div data-role="controlgroup" data-type="horizontal" class="horizontal-button-group">
+            <label for="allOrder">全部</label>
+            <input type="radio" id="allOrder" name="status" value="" checked>
+            <label for="noPayOrder">未付款</label>
+            <input type="radio" id="noPayOrder" name="status" value="0">
+            <label for="expiredOrder">已失效</label>
+            <input type="radio" id="expiredOrder" name="status" value="4">
+            <label for="cancledOrder">已取消</label>
+            <input type="radio" id="cancledOrder" name="status" value="1">
+            <label for="completedOrder">已完成</label>
+            <input type="radio" id="completedOrder" name="status" value="2">
+        </div>
+        <div class="rectangle-panel ui-grid-f mb10">
+            <div class="rectangle-panel-arrow">
+                <img src="images/order_0.png">
+            </div>
+            <h3>某某产品中文名称</h3>
+            <p class="light-color">商家中文名</p>
+            <p class="light-color">商家英文名</p>
+            <div class="pull-left mr6 rectangle-panel-image">
+                <img src="http://122.72.0.80/uploads/ff/2d/ff2df8f87f9151f420ba92ebbb7c9d742a6e3cc6.jpg">
+            </div>
+            <p class="pull-left mt5">数量<span class="light-color">9999</span></p>
+            <p class="pull-right"><span class="font20">123456</span><span class="light-color">RMB</span></p>
+            <div class="clearfix"></div>
+            <div class="pull-right rectangle-panel-btn-0">
+                <a href="#" data-role="button" data-inline="true">付款</a>
+                <a href="#" data-role="button" data-inline="true">取消</a>
+            </div>
+        </div>
+        <div class="rectangle-panel ui-grid-f mb10">
+            <div class="rectangle-panel-arrow">
+                <img src="images/order_4.png">
+            </div>
+            <h3>某某产品中文名称</h3>
+            <p class="light-color">商家中文名</p>
+            <p class="light-color">商家英文名</p>
+            <div class="pull-left mr6 rectangle-panel-image">
+                <img src="http://122.72.0.80/uploads/ff/2d/ff2df8f87f9151f420ba92ebbb7c9d742a6e3cc6.jpg">
+            </div>
+            <p class="pull-left mt5">数量<span class="light-color">9999</span></p>
+            <p class="pull-right"><span class="font20">123456</span><span class="light-color">RMB</span></p>
+            <div class="clearfix"></div>
+            <div class="pull-right rectangle-panel-btn-4">
+                <a href="#" data-role="button" data-inline="true">删除</a>
+            </div>
+        </div>
+
+        <div class="rectangle-panel ui-grid-f mb10">
+            <div class="rectangle-panel-arrow">
+                <img src="images/order_1.png">
+            </div>
+            <h3>某某产品中文名称</h3>
+            <p class="light-color">商家中文名</p>
+            <p class="light-color">商家英文名</p>
+            <div class="pull-left mr6 rectangle-panel-image">
+                <img src="http://122.72.0.80/uploads/ff/2d/ff2df8f87f9151f420ba92ebbb7c9d742a6e3cc6.jpg">
+            </div>
+            <p class="pull-left mt5">数量<span class="light-color">9999</span></p>
+            <p class="pull-right"><span class="font20">123456</span><span class="light-color">RMB</span></p>
+            <div class="clearfix"></div>
+            <div class="pull-right rectangle-panel-btn-1">
+                <a href="#" data-role="button" data-inline="true">删除</a>
+            </div>
+        </div>
+        <div class="rectangle-panel ui-grid-f mb10">
+            <div class="rectangle-panel-arrow">
+                <img src="images/order_2.png">
+            </div>
+            <h3>某某产品中文名称</h3>
+            <p class="light-color">商家中文名</p>
+            <p class="light-color">商家英文名</p>
+            <div class="pull-left mr6 rectangle-panel-image">
+                <img src="http://122.72.0.80/uploads/ff/2d/ff2df8f87f9151f420ba92ebbb7c9d742a6e3cc6.jpg">
+            </div>
+            <p class="pull-left mt5">数量<span class="light-color">9999</span></p>
+            <p class="pull-right"><span class="font20">123456</span><span class="light-color">RMB</span></p>
+        </div>
+    </div>
+</div>
+<div data-role="page" id="myOrderDescPage" class="general-page" data-theme="f">
+    <div data-role="header" data-theme="f" data-position="fixed">
+        <a href="#" class="" data-rel="back"><img class="left-normal" src="images/return.png"></a>
+        <h1>订单详情</h1>
+    </div><!-- /header -->
+    <div data-role="content" class="gray-back">
+        <div class="panel-title">订单信息</div>
+        <div class="white-panel ui-grid-1-3 list-line">
+             <div class="ui-block-a">订单号码</div>
+             <div class="ui-block-b text-right"><span class="font30">SUA890</span></div>
+        </div>
+        <div class="white-panel ui-grid-1-3 list-line">
+             <div class="ui-block-a">订单状态</div>
+             <div class="ui-block-b text-right"><span class="font20">未付款</span></div>
+        </div>
+        <div class="white-panel ui-grid-1-3 list-line">
+             <div class="ui-block-a">数量</div>
+             <div class="ui-block-b text-right"><span class="font30">1</span></div>
+        </div>
+        <div class="white-panel ui-grid-1-3 list-line">
+             <div class="ui-block-a">订单金额</div>
+             <div class="ui-block-b text-right"><span class="font30">890</span><span class="light-color">元</span></div>
+        </div>
+        <div class="white-panel ui-grid-1-3 list-line">
+             <div class="ui-block-a">下单时间</div>
+             <div class="ui-block-b text-right"><span class="">2014/08/08/22：02:00</span></div>
+        </div>
+        <div class="white-panel ui-grid-1-3 list-line">
+             <div class="ui-block-a">支付方式</div>
+             <div class="ui-block-b text-right"><span class="font20">网银支付</span></div>
+        </div>
+        <div class="white-panel list-line">
+             <div class="pull-left mr6"><img width="120" height="90" src="http://122.72.0.80/uploads/ff/2d/ff2df8f87f9151f420ba92ebbb7c9d742a6e3cc6.jpg"></div>
+             <div class="clearfix order-desc">
+                <p>泰国花台华泰花台</p>
+                <p class="light-color">五月花私人会所</p>
+                <p class="text-right mt20">
+                    <a href="#" data-role="button" data-inline="true">产品详情</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div data-role="footer" data-position="fixed">
+        <div class="ui-grid-a grid-block">
+            <div class="ui-block-a"><a href="#" class="large-btn" data-role="button" data-theme="b">取消订单</a></div>
+            <div class="ui-block-b"><a href="#" class="large-btn" data-role="button" data-theme="b">付款</a></div>
+        </div>
+    </div>
+</div>
+<div data-role="page" id="myTicket" class="general-page" data-theme="f">
+    <div data-role="header" data-theme="f" >
+        <div><a href="#" class="toShowLeftPush wy-header-rl wy-header-left"><img class="left_navbar" src="images/btn_topbar_meun.png"></a></div>
+        <h1>我的劵</h1>
+    </div>
+    <div data-role="content" class="gray-back pd10">
+        <div data-role="controlgroup" data-type="horizontal" class="horizontal-button-group">
+            <label for="allTicket">全部</label>
+            <input type="radio" id="allTicket" name="ticketstatus" value="" checked>
+            <label for="noUseTicket">未使用</label>
+            <input type="radio" id="noUseTicket" name="ticketstatus" value="0">
+            <label for="hasUseTicket">已使用</label>
+            <input type="radio" id="hasUseTicket" name="ticketstatus" value="1">
+            <label for="hasExpiredTicket">已过期</label>
+            <input type="radio" id="hasExpiredTicket" name="ticketstatus" value="2">
+        </div>
+        <div class="rectangle-panel ui-grid-f mb10">
+            <div class="rectangle-panel-arrow">
+                <img src="images/ticket_0.png">
+            </div>
+            <h3>某某产品中文名称</h3>
+            <p class="light-color">商家中文名</p>
+            <div class="ui-grid-b">
+                <div class="ui-block-a">
+                    <p>产品价</p>
+                    <p class="light-color">15000</p>
+                </div>
+                <div class="ui-block-b text-highlight">
+                    <p>抵用</p>
+                    <p class="light-color">5000</p>
+                </div>
+                <div class="ui-block-c">
+                    <p>实际消费只需</p>
+                    <p class="text-highlight font16">10000</p>
+                </div>
+            </div>
+            <p class="light-color">有效期 2014/04/01~2014/05/01</p>
+        </div>
+        <div class="rectangle-panel ui-grid-f mb10">
+            <div class="rectangle-panel-arrow">
+                <img src="images/ticket_1.png">
+            </div>
+            <h3>某某产品中文名称</h3>
+            <p class="light-color">商家中文名</p>
+            <div class="ui-grid-b">
+                <div class="ui-block-a">
+                    <p>产品价</p>
+                    <p class="light-color">15000</p>
+                </div>
+                <div class="ui-block-b text-highlight">
+                    <p>抵用</p>
+                    <p class="light-color">5000</p>
+                </div>
+                <div class="ui-block-c">
+                    <p>实际消费只需</p>
+                    <p class="text-highlight font16">10000</p>
+                </div>
+            </div>
+            <p class="light-color">有效期 2014/04/01~2014/05/01</p>
+        </div>
+        <div class="rectangle-panel ui-grid-f mb10">
+            <div class="rectangle-panel-arrow">
+                <img src="images/ticket_2.png">
+            </div>
+            <h3>某某产品中文名称</h3>
+            <p class="light-color">商家中文名</p>
+            <div class="ui-grid-b">
+                <div class="ui-block-a">
+                    <p>产品价</p>
+                    <p class="light-color">15000</p>
+                </div>
+                <div class="ui-block-b text-highlight">
+                    <p>抵用</p>
+                    <p class="light-color">5000</p>
+                </div>
+                <div class="ui-block-c">
+                    <p>实际消费只需</p>
+                    <p class="text-highlight font16">10000</p>
+                </div>
+            </div>
+            <p class="light-color">有效期 2014/04/01~2014/05/01</p>
+        </div>
+    </div>
+</div>
+<div data-role="page" id="myTicketDescPage" class="general-page" data-theme="f">
+    <div data-role="header" data-theme="f" data-position="fixed">
+        <a href="#" class="" data-rel="back"><img class="left-normal" src="images/return.png"></a>
+        <h1>劵详情</h1>
+    </div><!-- /header -->
+    <div data-role="content" class="gray-back">
+        <div class="general-content">
+            <div class="customer-panel ui-grid-f">
+                <div class="rectangle-panel-arrow">
+                    <img src="images/ticket_0.png">
+                </div>
+                <h3>某某产品中文名称</h3>
+                <p class="light-color">商家中文名</p>
+                <div class="ui-grid-b">
+                    <div class="ui-block-a">
+                        <p>产品价</p>
+                        <p class="light-color">15000</p>
+                    </div>
+                    <div class="ui-block-b text-highlight">
+                        <p>抵用</p>
+                        <p class="light-color">5000</p>
+                    </div>
+                    <div class="ui-block-c">
+                        <p>实际消费只需</p>
+                        <p class="text-highlight font16">10000</p>
+                    </div>
+                </div>
+                <p class="light-color">有效期 2014/04/01~2014/05/01</p>
+            </div>
+            <p class="back-highlight consumer-code">消费码  <span class="font16">1234567890QERTTTYYRRR</span></p>
+        </div>
+        <div class="white-panel ui-grid-f list-line">
+             <div class="ui-block-a">
+                <label class="pull-left">商家</label>
+                <div class="pull-left">
+                    <p class="light-color card_merchant_name">富罳科技有限公司</p>
+                    <p class="light-color card_merchant_name_en">Cronin LLC</p>
+                </div>
+            </div>
+             <div class="ui-block-b"><a href="#" data-role="button">商家详情</a></div>
+        </div>
+        <div class="white-panel ui-grid-f list-line">
+             <div class="ui-block-a">
+                <label class="pull-left">电话</label>
+                <p class="pull-left light-color card_phone">1-391-399-9254x415</p>
+            </div>
+             <div class="ui-block-b"><a href="#" data-role="button">立即联系</a></div>
+        </div>
+        <div class="white-panel ui-grid-f mb10">
+             <div class="ui-block-a">
+                <label class="pull-left">地址</label>
+                <p class="pull-left light-color card_address">南昌山亭区</p>
+            </div>
+             <div class="ui-block-b"><a href="#" data-role="button">查看地图</a></div>
+        </div>
+        <div class="white-panel list-line last">
+            <h5>购买须知</h5>
+            <p class="light-color card_tips">Velit officia labore perspiciatis eius. Excepturi ut illo exercitationem delectus. Est et animi nobis non et provident.</p>
+        </div>
+    </div>
+</div>
+<div data-role="page" id="serviceCenterPage" data-theme="f">
+    <div data-role="header" data-theme="f" >
+        <div><a href="#" class="toShowLeftPush wy-header-rl wy-header-left"><img class="left_navbar" src="images/btn_topbar_meun.png"></a></div>
+        <h1>客服中心</h1>
+    </div>
+    <div data-role="content">
+        <div class="service-header">
+            <img src="images/servicer.png">
+            <h3>蛙游客服</h3>
+            <p>您好,很高心为您服务。请问有什么可以帮您?</p>
+        </div>
+        <div class="ui-grid-a service-person">
+            <div  class="ui-block-a on-line">
+                <img src="images/on-line.png">
+                <h4>客服哇小灿</h4>
+                <p>在线</p>
+            </div>
+            <div  class="ui-block-b out-line">
+                <img src="images/out-line.png">
+                <h4>客服哇小灿</h4>
+                <p>离线</p>
+            </div>
+        </div>
+        <div class="ui-grid-a service-person service-last">
+            <div  class="ui-block-a out-line">
+                <img src="images/out-line.png">
+                <h4>客服哇小灿</h4>
+                <p>离线</p>
+            </div>
+            <div  class="ui-block-b out-line">
+                <img src="images/out-line.png">
+                <h4>客服哇小灿</h4>
+                <p>离线</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/modernizr.custom.js"></script>
+<script src="js/classie.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/jquery.icheck.min.js"></script>
+<script>
+    var order_val=0,start_index=1;
+    data={'merchant_id':0,'city_code':'','return_count':5,'start_index':0,'ticket_type':1,'longitude':0,'latitude':0,'orderby':$('input[name="order_by"]').val(),'auth_token':$('#_auth_token').val()}
+    $('#_order_by a').click(function(){
+        $('input[name="order_by"]').val($(this).attr('item-order'));
+         data1={'merchant_id':0,'city_code':'','return_count':5,'start_index':0,'ticket_type':1,'longitude':0,'latitude':0,'orderby':$('input[name="order_by"]').val()}
+        $.ajax({
+            type: 'GET',
+            url:'http://122.72.0.80:8080/api/ticket/getRecomendTickets',
+            data:data1,
+            dataType: 'json',
+            success:function(data){
+                if(data['msg']=='success'){
+                    listr=''
+                    list_data=data['data']
+                    for(i=0;i<list_data.length;i++){
+                        id=list_data[i]['id'];
+                        img=list_data[i]['image']
+                        name=list_data[i]['name']
+                        price=list_data[i]['price']
+                        equal_price=list_data[i]['equal_price']
+                        origin_price=list_data[i]['origin_price']
+                        symbol=list_data[i]['symbol']
+                        merchant_name=list_data[i]['merchant']['name']
+                        listr+='<li class="clearfix li_'+id+'"><a href="#page_'+id+'" class="right_info"><div class="pull-left mr6"><img width="100" height="75" src='+img+'></div><div class="clearfix"><h2>'+name+'</h2><p class="price">'+merchant_name+'</p><p class="pull-left"><span class="equal_price">'+price+'</span>元</p><p class="pull-right last"><span class="origin_price">可抵用 </span><span>'+symbol+origin_price+'</span></p></div></a></li>'
+                    }
+                    start_index=1;
+                    $('#_datalazyload ul').empty()
+                    $('#_datalazyload ul').append(listr)
+                }
+            },
+        })
+    });
+    $(document).bind('pagebeforechange',function(event,data){
+        var url=$.mobile.path.parseUrl(data.toPage).hash;
+        if(url!=undefined&&url.length>5&&url.substring(0,5)=='#page'){
+            var id=url.substring(5);
+            $.ajax({
+                type: 'GET',
+                url:'http://122.72.0.80:8080/api/ticket/getDetail',
+                data:{'id':id},
+                dataType: 'json',
+                success:function(data){
+                    if(data['msg']=='success'){
+                        data1=data['data'][0]
+                        $('#pageTemplate .card-phone-frame').html('<img src="'+data1['merchant']["images"][0]+'" alt="" width="258" height="172">');
+                        $('#pageTemplate .price_number').html(data1['price']);
+                        $('#pageTemplate .card_name').html(data1['name']);
+                        $('#pageTemplate .card_equal_price').html(data1['symbol'] +' '+data1['equal_price']);
+                        $('#pageTemplate .card_origin_price').html(data1['symbol'] +' '+data1['origin_price']);
+                        $('#pageTemplate .card_merchant_name').html(data1['merchant']['name']);
+                        $('#pageTemplate .card_merchant_name_en').html(data1['merchant']['name_en']);
+                        $('#pageTemplate .card_tips').html(data1['tips']);
+                        $('#pageTemplate .card_phone').html(data1['merchant']['phone']);
+                        $('#pageTemplate .card_address').html(data1['merchant']['address']);
+                        $('#pageTemplate .product_to_order').attr('href','#orderPayment'+id);
+                    }
+                },
+            })
+            $.mobile.changePage($('#pageTemplate'),{dataUrl:data.toPage});
+            event.preventDefault()
+        }
+
+        if(url!=undefined&&url.length>13&&url.substring(0,13)=='#orderPayment'){
+            var id=url.substring(13);
+            if($('#_auth_token').val()==''){
+                $.mobile.changePage($('#signinPage'));
+                event.preventDefault()
+            }else{
+                number=$('#pageTemplate .price_number').html()*$('input[name="qty"]').val()
+                if($('input[name="qty"]').val()>1){
+                    $('.mini_qty_add .minus').css('background-color','#3dc2f7')
+                }
+                $('#orderPayment .pay_product_name').html($('#pageTemplate .card_name').html());
+                $('#orderPayment .pay_product_price').html($('#pageTemplate .price_number').html());
+                $('#orderPayment .show_pay_price').html(Math.round(number*100)/100);
+                $('#comfirm_payment_btn').click(function(){
+                    $.ajax({
+                        type: 'post',
+                        url:'http://122.72.0.80:8080/api/order/order',
+                        data:{'ticket_id':id,'auth_token':$('#_auth_token').val(),'price':$('#pageTemplate .price_number').html(),'num':$('input[name="qty"]').val(),'pay_type':$('input[name="paytype"]:checked').val()},
+                        dataType: 'json',
+                        success:function(data){
+                            if(data['msg']=='success'){
+                               /* data2=data['data'][0]
+                                $('#orderPayment .pay_product_name').html(data2['price']);*/
+                                
+                            }
+                        }
+                    })
+                })
+                $.mobile.changePage($('#orderPayment'),{dataUrl:data.toPage});
+                event.preventDefault()
+            }
+            
+        }
+    })
+    $(document).on("scrollstart",function(){
+        if($('#_datalazyload ul').height()>=480*start_index){
+            data={'merchant_id':0,'city_code':'','return_count':5,'start_index':start_index,'ticket_type':1,'longitude':0,'latitude':0,'orderby':$('input[name="order_by"]').val(),'auth_token':$('#_auth_token').val()}
+            t = setTimeout(function() {
+                load();
+            }, 1000);
+            start_index+=1;
+        }
+    })
+    $(document).on('pageinit',"#page",function(){
+        load();
+    })
+    
+    $(document).on('pageinit',"#orderPayment",function(){
+        $(".minus").click(function(){var n = $(".qty").val();minus(n);})       
+        $(".plus").click(function(){var n = $(".qty").val();plus(n);})  
+        /*$('#comfirm_payment_btn').click(function(){
+            $.ajax({
+                type: 'POST',
+                url:'http://122.72.0.80:8080/api/order/order',
+                data:{'auth_token':$('#_auth_token').val(),'ticket_id':},
+                dataType: 'json',
+                success:function(data){
+                    if(data['msg']=='success'){
+                        
+                    }
+                },
+            })
+        })*/
+    })
+    function load(){
+        $.ajax({
+            type: 'GET',
+            url:'http://122.72.0.80:8080/api/ticket/getRecomendTickets',
+            data:data,
+            dataType: 'json',
+            success:function(data){
+                if(data['msg']=='success'){
+                    listr=''
+                    list_data=data['data']
+                    for(i=0;i<list_data.length;i++){
+                        id=list_data[i]['id'];
+                        img=list_data[i]['image']
+                        name=list_data[i]['name']
+                        price=list_data[i]['price']
+                        equal_price=list_data[i]['equal_price']
+                        origin_price=list_data[i]['origin_price']
+                        symbol=list_data[i]['symbol']
+                        merchant_name=list_data[i]['merchant']['name']
+                        listr+='<li class="clearfix li_'+id+'"><a href="#page'+id+'" class="right_info"><div class="pull-left mr6"><img width="100" height="75" src='+img+'></div><div class="clearfix"><h2>'+name+'</h2><p class="price">'+merchant_name+'</p><p class="pull-left"><span class="equal_price">'+price+'</span>元</p><p class="pull-right last"><span class="origin_price">可抵用 </span><span>'+symbol+origin_price+'</span></p></div></a></li>'
+                    }
+                    $('#_datalazyload ul').append(listr)
+                }
+            }
+        })
+    }
+    function plus(n){
+        n = parseInt(n);
+        n=n+1;
+        if(n>1){
+            $('.mini_qty_add .minus').css('background-color','#3dc2f7')
+        }
+        $(".qty").val(n);
+        number=$('#pageTemplate .price_number').html()*$('input[name="qty"]').val()
+        $('#orderPayment .show_pay_price').html(Math.round(number*100)/100)
+    }
+    function minus(n){
+        n = parseInt(n);
+        if (n>1){
+            n=n-1;$(".qty").val(n);
+        }else{
+            $('.mini_qty_add .minus').css('background-color','#ccc')
+        }
+        number=$('#pageTemplate .price_number').html()*$('input[name="qty"]').val()
+        $('#orderPayment .show_pay_price').html(Math.round(number*100)/100)
+    }
+    var menuLeft = document.getElementById('cbp-spmenu-s1'),
+        showLeftPush = document.getElementById('showLeftPush'),
+        body = document.body;
+    showLeftPush.onclick = function(){
+        classie.toggle(this, 'active');
+        classie.toggle(body, 'cbp-spmenu-push-toright');
+        classie.toggle(menuLeft, 'cbp-spmenu-open');
+    };
+    $('.toShowLeftPush').click(function(){
+        classie.add(this, 'active');
+        classie.add(body, 'cbp-spmenu-push-toright');
+        classie.add(menuLeft, 'cbp-spmenu-open');
+         $.mobile.changePage($('#page'));
+    })
+    $('#cbp-spmenu-s1 a').on("tap",function(){
+        $.mobile.changePage('#'+$(this).attr('data-src'),{transition: "slide"});
+        classie.remove(this, 'active');
+        classie.remove(body, 'cbp-spmenu-push-toright');
+        classie.remove(menuLeft, 'cbp-spmenu-open');
+    })
+</script>
+</body>
+</html>

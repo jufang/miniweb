@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>商家详情</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+<script type="text/javascript" charset="utf-8" src="/js/iscroll.js"></script>
+<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="js/mobile_init.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="js/global.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+</head>
+<body>
+    <div data-role="page" id="merchantDescPage" class="general-page" data-dom-cache="true">
+        <script type="text/javascript">
+        $('#merchantDescPage').live('pagebeforeshow',function(event, data){
+            outside=localStorage.getItem('outside')
+            if(outside==0||outside==null){
+              $('#merchant_desc_look_map').hide();
+            }
+        })
+        $('#merchantDescPage').live('pageinit',function(event, data){
+            auth_tocken=localStorage.getItem('auth_token')
+            if(window.location.search){
+                list=getUrlParam(decodeURI(window.location.search))
+                id = list[0];
+                city_code=list[1];
+                $.ajax({
+                    type: 'GET',
+                    url: '/merchant/getDetail',
+                    data: {'merchant_id': id,'auth_tocken':auth_tocken},
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data['msg'] == 'success') {
+                            var data1 = data['data'][0];
+                            $('#merchantDescPage .card-phone-frame').html('<img src="' + data1["images"][0] + '" alt="" width="258" height="172">');
+                            $('#merchantDescPage .merchant_name').html(data1['name']);
+                            $('#merchantDescPage .merchant_name_en').html(data1['name_en']);
+                            $('#merchantDescPage .merchant_phone').html(data1['phone']);
+                            $('#merchantDescPage .merchant_address').html(data1['address']);
+                            $('#merchantDescPage .all_product').attr('href','merchant_all_product.html?merchant_id='+data1['id']+'&city_code='+city_code+'&merchant_name='+data1['name']+'&merchant_name_en='+data1['name_en'])
+                            $('#merchantDescPage #merchant_desc_look_map').attr('href','map.html?latitude='+data1['latitude']+'&longitude='+data1['longitude']+'&merchant_name='+data1['name']+'&merchant_name_en='+data1['name_en']+'&address='+data1['address'])
+                        }else{ myAlert('请求失败')}
+                    }
+                })
+                $.ajax({
+                    type: 'GET',
+                    url: '/ticket/getRecomendTickets',
+                    data: {'merchant_id': id,'auth_tocken':auth_tocken,'city_code':city_code,'return_count':100,'start_index':0,'longitude':0,'latitude':0,'orderby':0,'outside':1},
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data['msg'] == 'success') {
+                            var listr = '';
+                            list_data = data['data'];
+                            for (i = 0; i < list_data.length; i++) {
+                                id            = list_data[i]['id'];
+                                name          = list_data[i]['name'];
+                                price         = list_data[i]['price'];
+                                equal_price   = list_data[i]['equal_price'];
+                                origin_price  = list_data[i]['origin_price'];
+                                symbol        = list_data[i]['symbol'];
+                                listr +='<li>'
+                                listr +=    '<a href="card.html?card='+id+'&city_code='+city_code+'" data-ajax="false" class="merchant-hot-text">'
+                                listr +=        '<p>'+name+'</p>'
+                                listr +=        '<div class="ui-grid-a mb10">'
+                                listr +=            '<div class="ui-block-a"><span class="font20">'+price+'</span>元</div>'
+                                listr +=            '<div class="ui-block-b text-highlight text-right mt5">可抵用<span>'+symbol+' '+origin_price+' ></span></div>'
+                                listr +=        '</div>' 
+                                listr +=    '</a>'
+                                listr +='</li>'
+                            }
+                            $('#recomend_hot_product').append(listr);
+                        }else{ myAlert('请求失败')}
+                    }
+                })
+            }
+        })
+        </script>
+        <div data-role="header" data-theme="f" data-position="fixed" data-tap-toggle="false">
+            <a href="#" data-rel="back" data-corners="false"><img class="left-normal" src="images/return.png"></a>
+            <h1>商家详情</h1>
+        </div>
+        <div data-role="content" class="gray-back overflow-hidden">   
+            <div class="card-phone">
+                <div class="card-phone-frame"></div>
+            </div> 
+            <div class="merchant-info">
+                <div class="white-panel ui-grid-f list-line">
+                     <div class="ui-block-a">
+                        <label class="pull-left">商家</label>
+                        <div class="pull-left">
+                            <p class="light-color merchant_name"></p>
+                            <p class="light-color merchant_name_en"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="white-panel ui-grid-f list-line">
+                     <div class="ui-block-a"><label class="pull-left">电话</label><p class="pull-left light-color merchant_phone"></p></div>
+                     <!-- <div class="ui-block-b"><a href="#" data-role="button">立即联系</a></div> -->
+                </div>
+                <div class="white-panel ui-grid-f mb10">
+                     <div class="ui-block-a"><label class="pull-left">地址</label><p class="pull-left light-color merchant_address"></p></div>
+                     <div class="ui-block-b"><a href="#" id="merchant_desc_look_map" data-ajax="false" data-role="button">查看地图</a></div>
+                </div>
+                <div class="white-panel ui-grid-f">
+                   <div class="ui-block-a" style="margin-top:10px;">商家热卖</div>
+                   <div class="ui-block-b"><a href="#" data-ajax="false" data-role="button" class="all_product">所有产品</a></div>
+                   <div class="clearfix"></div>
+                   <ul id="recomend_hot_product"></ul>
+                </div>
+            </div>    
+        </div>
+    </div>
+    <div class="ui-loader-background"> </div>
+</body>
+</html>

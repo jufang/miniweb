@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>个人中心</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="js/mobile_init.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="js/global.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/ajaxfileupload.js"></script>
+</head>
+<body>
+    <div data-role="page" id="userEditPage" class="general-page" data-theme="f"  data-dom-cache="true" >
+        <script type="text/javascript">
+            function change_password_fn(){
+                $('#popupChangePwd').popup("close")
+                myAlert('密码修改成功')
+            }
+            function get_edit_profile_fn(data){
+                var data1 = data['data'][0];
+                username  =data1['username'];
+                image     =data1['image'];
+                phone     =data1['phone'];
+                email     =data1['email'];
+                if(phone==null){phone=''}
+                if(email==null){email=''}
+                gender=data1['gender'];
+                $('#userEditPage input[name="username"]').val(username);
+                $('#userEditPage .image').attr(image);
+                $('#userEditPage input[name="phone"]').val(phone);
+                $('#userEditPage input[name="email"]').val(email);
+                if(gender==0){
+                    $('#userEditPage #secret').attr('checked',true).checkboxradio('refresh');
+                }else if(gender==1){
+                    $('#userEditPage #male').attr('checked',true).checkboxradio('refresh');
+                }else{
+                    $('#userEditPage #female').attr('checked',true).checkboxradio('refresh');
+                }
+            }
+            function edit_profile_fn(){myAlert('个人信息更新成功')}
+            $('#userEditPage').live('pagebeforeshow',function(event, data){
+                auth_token=localStorage.getItem('auth_token')
+                if (auth_token == ''||auth_token==null) {
+                   window.location.href='sign.html'
+                } else {
+                    $.ajax({
+                        type: 'GET',
+                        url:'user/getProfile',
+                        data:{'auth_token':auth_token},
+                        dataType: 'json',
+                        success:function(data){
+                            translate(data['return_code'],get_edit_profile_fn,data)
+                        }
+                    })
+                }
+            })
+            $("#userEditPage").live('pagebeforeshow', function() {
+                user_header_img = localStorage.getItem('user_header_img');
+                if(user_header_img){
+                    $('.user-pic .img-circle').attr('src',user_header_img)
+            }
+            })
+            $("#userEditPage").live('pageinit', function() {
+                $('#changePasswordForm').on('submit',function(ev){
+                    if (auth_token == ''||auth_token==null) {
+                           window.location.href='sign.html'
+                    }else{
+                        old_password =$('#old_password').val();
+                        new_password =$('#new_password').val();
+                        re_password  =$('#re_password').val();
+                        if(old_password=='' || new_password==''||re_password==''){
+                            $('#changePasswordForm .error').text('密码不能为空')
+                        }else if(new_password.length<6 || re_password.length<6){
+                            $('#changePasswordForm .error').text('密码不能少于6位')
+                        }else if(new_password!=re_password){
+                            $('#changePasswordForm .error').text('确认密码不一致')
+                        }else{
+                            $.ajax({
+                                type: 'post',
+                                url:'/user/changePassword',
+                                data:{'auth_token':auth_token,'old_password':old_password,'new_password':new_password,'re_password':re_password},
+                                dataType: 'json',
+                                success:function(data){
+                                    translate(data['return_code'],change_password_fn,'')
+                                }
+                            })
+                        }
+                        ev.preventDefault();
+                        return false;
+                    }
+                })
+            });
+        </script>
+        <div data-role="header" data-theme="f" data-position="fixed" data-tap-toggle="false">
+            <a href="#" data-rel="back" data-corners="false"><img class="left-normal" src="images/return.png"></a>
+            <h1>个人中心</h1>
+            <a href="#" onclick="edit_user_info()" class="nolinktext edit-text" data-role="none">完成</a>
+        </div>
+        <div data-role="content" class="user-content general-content">
+            <div class="user-edit-image clearfix">
+                <div class="pull-left">头像</div>
+                <div class="pull-right">
+                    <a href="user_pic_dialog.html" class="user-pic" data-rel="dialog" data-transition="pop" style="text-decoration: none;">
+                        <img class="img-circle" src="images/icon_head_default.png" width="80" height="80">
+                        <img src="images/11.jpg" class="right-triangle">
+                    </a>
+                </div>
+            </div>
+            <div class="control-input">
+                <label>账号</label>
+                <input type="text" name="username" placeholder="请输入用户名/邮箱">
+            </div>
+            <div class="control-input">
+                <label>密码</label>
+                <input type="text" name="password" placeholder="******">
+                <a class="inner-btn cp-btn" data-corners="false" href="#popupChangePwd" data-rel="popup" data-position-to="window" data-role="button">修改密码</a>
+            </div>
+            <div class="control-input">
+                <label>手机</label>
+                <input type="tel" name="phone" maxlength="11" placeholder="请输入手机号码">
+            </div>
+            <div class="control-input">
+                <label>邮箱</label>
+                <input type="text" name="email" placeholder="请输入正确的邮箱地址">
+            </div>
+            <div class="inline-radio">   
+                <label class="radio-title">性别</label>
+                <input type="radio" name="gender" id="male" value="1" class="regular-radio" />
+                <label for="male">男</label>
+                <input type="radio" name="gender" id="female" value="2" class="regular-radio" />
+                <label for="female">女</label>
+                <input type="radio" name="gender" id="secret" value="0" class="regular-radio"/>
+                <label for="secret">保密</label>
+            </div>
+        </div>
+        <script type="text/javascript">
+            function edit_user_info(){
+                username =   $('#userEditPage input[name="username"]').val();
+                phone    =  $('#userEditPage input[name="phone"]').val();
+                email    =  $('#userEditPage input[name="email"]').val();
+                gender   = $('input[name="gender"]:checked').val();
+                if(phone){localStorage.setItem('phone',phone)}
+                if (auth_token == ''||auth_token==null) {
+                    window.location.href='sign.html'
+                }else if(username==''){
+                    myAlert('账号不能为空')
+                }else{
+                    $.ajax({
+                        type: 'post',
+                        url:'/user/editProfile',
+                        data:{'auth_token':auth_token,'username':username,'phone':phone,'email':email,'gender':gender},
+                        dataType: 'json',
+                        success:function(data){
+                            translate(data['return_code'],edit_profile_fn,'')
+                        }
+                    })
+                }
+            }
+        </script>
+        <div data-role="popup" data-position-to="window" data-overlay-theme="b"  id="popupChangePwd"  class="white-popup general-content">
+            <form id="changePasswordForm">
+                <div class="error"></div>
+                <div class="control-sm-input">
+                    <input type="text" placeholder="输入原密码" id="old_password" name="old_password">
+                </div>
+                <div class="control-sm-input">
+                    <input type="password" placeholder="输入新密码" id="new_password" name="new_password">
+                </div>
+                <div class="control-sm-input">
+                    <input type="password" placeholder="再次输入新密码" id="re_password" name="re_password">
+                </div>
+                <div class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <a class="btn sm-btn button-circle" data-rel="back" data-role="button" href="#">取消</a>
+                    </div>
+                    <div class="ui-block-b submit-sm">
+                        <input class="submit" type="submit" value="确认">
+                    </div>
+                </div> 
+            </form>
+        </div>
+    </div>
+</body>
+</html>

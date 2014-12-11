@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+    <title>在线客服</title>
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <style type="text/css">
+		*{padding:0;margin:0;}
+		#xtOnlineServiceDiv{position: relative;top:70%;left: 50%;margin-left: -100px;margin-top:-27px;}
+		#xtOnlineServiceDiv img{width: 200px;height: 55px;}
+	</style>
+    <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+    <script src="js/mobile_init.js" type="text/javascript"></script>
+    <script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+  </head>
+<body onload="screenInfo()">
+	<div data-role="page" id="servicePage" class="general-page" data-dom-cache="true">
+		<div data-role="header" data-theme="f" data-position="fixed">
+	        <a href="#" data-rel="back" data-corners="false"><img class="left-normal" src="images/return.png"></a>
+	        <h1>客服</h1>
+	    </div>
+	    <div role="main" class="ui-content">
+	    	<div class="service-header">
+	            <img src="images/servicer.png">
+	            <h3>蛙游客服</h3>
+	            <p>您好,很高心为您服务。请问有什么可以帮您?</p>
+	            <script type="text/javascript" src="http://1.kefusoft.com/mobileJsCode?publishId=297ec22d466110660146b832c8720f8d&pos=center&mwinpos=1"></script>
+	        </div>
+	    </div>
+		<script type="text/javascript">
+		function screenInfo(){
+		   $('.service-header').css('height',document.body.clientHeight-50)
+		}
+		</script>
+	</div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>主页</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="js/mobile_init.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="js/global.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+</head>
+<body>
+	<div data-role="page" id="registerSuccessPage" class="general-page" data-theme="f" data-dom-cache="true">
+		<script type="text/javascript">
+			$("#registerSuccessPage").live('pageshow', function() {
+				$('.slidebar_blue').animate({width:'+=240px'},5000,function(){
+		            $.mobile.changePage('index.html',{ transition: "slide",'reverse':true});
+		        });
+			})
+		</script>
+	    <div data-role="header" data-theme="f" data-position="fixed">
+	        <a href="#" data-role="back"><img class="left-normal" src="images/return.png"></a>
+	        <h1>注册成功</h1>
+	    </div><!-- /header -->
+	    <div data-role="content" class="general-content">
+	        <div class="col-sm-12 mb10">
+	            <div class="thumbnail"><img src="images/register_success.jpg" ></div>
+	        </div> 
+	        <h1 class="text-center light-color">恭喜您,注册成功！</h1>
+	        <p class="text-highlight text-center mt30" >正在进入蛙游...</p>
+	        <div class="slidebar">
+	            <div class="slidebar_blue" style="background-color:#3dc2f7;width:0px;height:6px;border-radius:3px;"></div>
+	        </div>
+	    </div>
+	</div>
+	<div class="ui-loader-background"> </div>
+</body>
+</html>

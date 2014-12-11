@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>商家所有产品</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+<script type="text/javascript" charset="utf-8" src="/js/iscroll.js"></script>
+<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="js/mobile_init.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="js/global.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+</head>
+<body>
+    <div data-role="page" id="merchantAllProductPage" class="general-page" data-dom-cache="true">
+        <script type="text/javascript">
+            var myScroll,pullUpEl, pullUpOffset,generatedCount = 0;
+            var tmp_list_data=[];
+            //默认显示5条数据
+            var pull_up_number=5;
+            $("#merchantAllProductPage").live("pagebeforeshow", function(){
+                if(window.location.search){
+                    list=getUrlParam(decodeURI(window.location.search));
+                    city_code=list[1];
+                    $('#merchantAllProductPage .merchant_name').html(list[2]);
+                    $('#merchantAllProductPage .merchant_name_en').html(list[3]);
+                    $.ajax({
+                    type: 'GET',
+                    /*/ticket/getTickets    just test*/
+                    url: '/ticket/getRecomendTickets',
+                    data: {'merchant_id': list[0],'auth_tocken':localStorage.getItem('auth_token'),'city_code':city_code,'return_count':1000,'start_index':0,'longitude':0,'latitude':0,'orderby':0,'outside':1},
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data['msg'] == 'success') {
+                            list_data = data['data'];
+                            tmp_list_data=list_data
+                            var listr = '';
+                            for (i = 0; i < 5; i++) {
+                                if(i<list_data.length){
+                                    id            = list_data[i]['id'];
+                                    name          = list_data[i]['name'];
+                                    price         = list_data[i]['price'];
+                                    equal_price   = list_data[i]['equal_price'];
+                                    origin_price  = list_data[i]['origin_price'];
+                                    symbol        = list_data[i]['symbol'];
+                                    listr +='<li>'
+                                    listr +=    '<a href="card.html?card='+id+'&city_code='+city_code+'" data-ajax="false" class="merchant-hot-text">'
+                                    listr +=        '<p>'+name+'</p>'
+                                    listr +=        '<div class="ui-grid-a mb10">'
+                                    listr +=            '<div class="ui-block-a"><span class="font20">'+price+'</span>元</div>'
+                                    listr +=            '<div class="ui-block-b text-highlight text-right mt5">可抵用<span>'+symbol+' '+origin_price+' ></span></div>'
+                                    listr +=        '</div>' 
+                                    listr +=    '</a>'
+                                    listr +='</li>'
+                                }
+                            }
+                            $('#contentList1').append(listr);
+                        }else{
+                            myAlert('请求失败')
+                        }
+                    }
+                })
+                }
+                setTimeout(loaded2, 200); 
+            });
+            function pullUpAction () {
+                /*下拉刷新时,一次刷新2条数据*/
+                if(pull_up_number<tmp_list_data.length){
+                    setTimeout(function () { 
+                        var listr = '';
+                        for (i = pull_up_number; i < pull_up_number+2; i++) {
+                            if(i<tmp_list_data.length){
+                                id            = tmp_list_data[i]['id'];
+                                name          = tmp_list_data[i]['name'];
+                                price         = tmp_list_data[i]['price'];
+                                equal_price   = tmp_list_data[i]['equal_price'];
+                                origin_price  = tmp_list_data[i]['origin_price'];
+                                symbol        = tmp_list_data[i]['symbol'];
+                                listr +='<li>'
+                                listr +=    '<a href="card.html?card='+id+'&city_code='+city_code+'" data-ajax="false" class="merchant-hot-text">'
+                                listr +=        '<p>'+name+'</p>'
+                                listr +=        '<div class="ui-grid-a mb10">'
+                                listr +=            '<div class="ui-block-a"><span class="font20">'+price+'</span>元</div>'
+                                listr +=            '<div class="ui-block-b text-highlight text-right mt5">可抵用<span>'+symbol+' '+origin_price+' ></span></div>'
+                                listr +=        '</div>' 
+                                listr +=    '</a>'
+                                listr +='</li>'
+                            }
+                        }
+                        $('#contentList1').append(listr);
+                        myScroll.refresh();
+                        pull_up_number+=2;
+                    }, 1000); 
+                }else{
+                    myScroll.refresh();
+                }
+            }   
+            $("#merchantAllProductPage").live('pageinit', function () {
+            });
+        </script>
+        <div data-role="header" data-theme="f" data-position="fixed" data-tap-toggle="false">
+            <a href="#" data-rel="back" data-corners="false"><img class="left-normal" src="images/return.png"></a>
+            <h1>商家所有产品</h1>
+        </div>
+        <div data-role="content" class="overflow-hidden">  
+            <div class="pd10" style="border-bottom: 1px solid #ddd;position:fixed;width:100%;">
+                <h3 class="merchant_name"></h3> 
+                <p class="merchant_name_en"></p>
+            </div> 
+            <div id="wrapperContent1" class="wrapper" style="top:110px">
+                <div id="scrollerContent1" class="scroller">
+                <ul id="contentList1" class="contentList">  
+                </ul>
+                <div id="pullUp" class="hide">
+                    <span class="pullUpIcon"></span><span class="pullUpLabel">上拉加载更多...</span>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui-loader-background"> </div>
+</body>
+</html>

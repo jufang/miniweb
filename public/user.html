@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>个人中心</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="js/mobile_init.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="js/global.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/ajaxfileupload.js"></script>
+</head>
+<body>
+    <div data-role="page" id="userPage" data-theme="f"  data-dom-cache="true" >
+        
+        <div data-role="header" data-theme="f" data-position="fixed" data-tap-toggle="false">
+            <a href="/" data-ajax="false" data-corners="false" data-transition="slide" data-direction="reverse" class="wy-header-rl wy-header-left"><img class="left_navbar" src="images/btn_topbar_meun.png"></a>
+            <h1>个人中心</h1>
+            <a class="nolinktext edit-text" href="edit_user.html" data-transition="slide" data-role="none">编辑</a>
+        </div>
+        <div data-role="content" class="user-content">
+            <div class="user-header">
+                <div class="user-pic-back">
+                    <img src="images/icon_head_default.png" width="80" height="80">
+                </div>
+            </div>
+            <div class="user-info">
+                <ul class="user-ontent-list">  
+                    <li>
+                        <div class="ui-grid-a user-text">
+                            <div class="ui-block-a">用户</div>
+                            <div class="ui-block-b text-right username">Boon</div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="ui-grid-a user-text">
+                            <div class="ui-block-a">密码</div>
+                            <div class="ui-block-b text-right">******</div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="ui-grid-a user-text">
+                            <div class="ui-block-a">手机</div>
+                            <div class="ui-block-b text-right phone">1580123567</div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="ui-grid-a user-text">
+                            <div class="ui-block-a">邮箱</div>
+                            <div class="ui-block-b text-right email">frogtrip@163.com</div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="ui-grid-a user-text">
+                            <div class="ui-block-a">性别</div>
+                            <div class="ui-block-b text-right gender">保密</div>
+                        </div>
+                    </li>
+            </div>
+        </div>
+        <div class="footer-content">
+            <a href="#"  data-role="button" class="btn" onclick="logout()">退出账号</a>
+        </div>
+    </div>
+    <div class="ui-loader-background"> </div>
+</body>
+</html>

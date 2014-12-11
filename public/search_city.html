@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>搜索城市</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="js/mobile_init.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="js/global.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?v=3&sensor=false"  async="async"></script>
+</head>
+<body>
+	<div data-role="page" id="searchCityPage" data-theme="z" class="general-page" data-dom-cache="true">
+		<script type="text/javascript">
+      $('#searchCityPage').live('pagebeforeshow',function(){
+        outside=localStorage.getItem('outside')
+        if(outside==0||outside==null){$('#location_current_city').hide()}
+        if(outside==null){outside=0}
+      })
+		  $('#searchCityPage').bind('pageinit',function(){
+        $("input[data-type='search']").keyup(function() {
+          if($(this).val()){
+            $('.hot-city-content').hide()
+          }else{
+            $('.hot-city-content').show()
+          }
+        });
+        auth_token=localStorage.getItem('auth_token')
+			  data = {'auth_token':auth_token};
+        $.ajax({
+            type: 'GET',
+            url:'destination/getCities',
+            data:data,
+            dataType: 'json',
+            success:function(data){
+               	if(data['msg']=='success'){ 
+               		divide=[];
+               		li_html='',hot_city_html='';  
+               		data_list=data['data'][0]['list']
+               		data_hot_city_list=data['data'][0]['hotcities']
+               		for(i=0;i<data_hot_city_list.length;i++){
+               			hot_city_html+='<a data-ajax="false" data-inline="true" data-role="button" href="/index.html?merchant_id=0&city_code='+data_hot_city_list[i]['city_code']+'&return_count=5&start_index=0&ticket_type=1&longitude=0&latitude=0&orderby=0&auth_token='+auth_token+'&city_name='+data_hot_city_list[i]['city_name']+'&outside='+outside+'" class="ui-link ui-btn ui-btn-inline" role="button">'+data_hot_city_list[i]['city_name']+'</a>';
+               		}
+               		$('#hot_city_list').append(hot_city_html);
+                  li_html+='<li><a style="font-weight:normal;color:#555;" data-ajax="false" href="index.html">全部</a></li>';
+               		for(i=0;i<data_list.length;i++){
+               			up_city_pinyin=data_list[i]['city_pinyin'][0].toUpperCase();
+               			if(divide.inArray(up_city_pinyin)==-1){
+               				li_html+='<li class="gray-back">'+up_city_pinyin+'</li>';
+               				divide.push(up_city_pinyin)
+               			}
+               			li_html+='<li><a data-ajax="false" href="/index.html?merchant_id=0&city_code='+data_list[i]['city_code']+'&return_count=5&start_index=0&ticket_type=1&longitude=0&latitude=0&orderby=0&auth_token='+auth_token+'&city_name='+data_list[i]['city_name']+'&outside='+outside+'" class="ui-btn list-item">'+data_list[i]['city_name']+'</a></li>'
+               		}
+               		$('#city_filter').append(li_html).listview('refresh');	
+                }else{myAlert('请求失败')}
+            }
+        })
+        $('#location_current_city').on('tap',function(){
+          $.mobile.loading( "show", {theme:'b',textVisible: 'true',text: '正在定位当前城市...'});
+          getgeolocation()
+        })
+      })
+		</script>
+    <div data-role="header" data-theme="f" data-position="fixed">
+        <a href="index.html" data-ajax="false" data-corners="false" data-transition="slide" data-direction="reverse"><img class="left-normal" src="images/return.png"></a>
+        <h1>选择城市</h1>
+        <a href="#" data-ajax="false" id="location_current_city" data-shadow="false"><img class="right-normal" src="images/spot.png"></a>
+    </div><!-- /header -->
+    <div data-role="content">
+    	
+      <!-- <div style="padding:13px;">
+        <ul id="city_filter"  data-role="listview" data-filter="true" data-filter-placeholder="输入目的地名称"></ul>
+      </div> -->
+      <form class="search-form">
+        <input type="text" data-type="search" id="filterable-input" placeholder="输入目的地名称">
+      </form>
+      <div class="hot-city-content  pd10">
+        <h3 class="text-highlight">热门城市</h3>
+        <div id="hot_city_list"></div>
+      </div>
+      <ul id="city_filter"  data-role="listview" data-filter="true" data-input="#filterable-input" style="border-top:1px solid #ddd;margin:0;">
+      </ul>
+    </div>
+	</div>
+  <div class="ui-loader-background"> </div>
+</body>
+</html>

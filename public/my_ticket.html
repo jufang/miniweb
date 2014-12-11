@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>主页</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="js/mobile_init.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="js/global.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+</head>
+<body>
+	<div data-role="page" id="myTicketPage" class="general-page" data-theme="f"  data-dom-cache="true">
+		<script type="text/javascript">
+		function get_user_tickets_fn(data){
+			data1=data['data']
+            for(i=0;i<data1.length;i++){
+            	ticket_id=data1[i]['id']
+        		list0='';
+        		actual_price=data1[i]['origin_price']-data1[i]['equal_price'];
+        		list0+='<div class="rectangle-panel ui-grid-f mb10" onclick="goTo(\'#myTicketDescPage'+ticket_id+'\',false)">';
+		        list0+=    '<div class="rectangle-panel-arrow">';
+		        list0+=        '<img src="images/ticket_'+data1[i]['status']+'.png">';
+		        list0+=    '</div>';
+		        list0+=    '<div class="pull-left"><h3>'+data1[i]['name']+'</h3>';
+		        list0+=    '<p class="light-color mb10">'+data1[i]['merchant']['name']+'</p></div>';
+		        list0+=	   '<div class="pull-right mr20"><span class="font20 text_red">'+data1[i]['price']+'</span><span class="light-color">元</span></div>'
+		        list0+=		'<div class="clearfix"></div>'
+		        list0+=    '<div class="ui-grid-20 mb10">';
+		        list0+=        '<div class="ui-block-a">';
+		        list0+=            '<p class="text-highlight mb2">产品原价</p>';
+		        list0+=            '<p class="light-color">'+data1[i]['symbol']+' '+data1[i]['origin_price']+'</p>';
+		        list0+=        '</div>';
+		        list0+=		  '<div class="ui-block-b text-highlight">-</div>';
+		        list0+=        '<div class="ui-block-c text_red">';
+		        list0+=            '<strong class="mb2">抵用</strong>';
+		        list0+=            '<p>'+data1[i]['symbol']+' '+data1[i]['equal_price']+'</p>';
+		        list0+=        '</div>';
+		        list0+=		  '<div class="ui-block-d text-highlight">=</div>';
+		        list0+=        '<div class="ui-block-e">';
+		        list0+=            '<p class="text-highlight mb2">实际消费只需</p>';
+		        list0+=            '<p class="light-color">'+data1[i]['symbol']+' '+actual_price+'</p>';
+		        list0+=        '</div>';
+		        list0+=    '</div>';
+		        list0+=    '<p class="light-color">有效期 '+data1[i]['validity_start']+'~'+data1[i]['validity_end']+'</p>';
+		        list0+='</div>';
+		        $('#ticket-control-content #my-ticket-'+data1[i]['status']).append(list0)
+            } 
+		}
+		$('#myTicketPage').live('pageinit',function(){
+			auth_token=localStorage.getItem('auth_token')
+			data = {
+                'status'   : '',
+                'return_count'  : 5,
+                'start_index'   : 0,
+                'auth_token'    : auth_token
+            };
+            if (auth_token == ''||auth_token==null) {
+                   window.location.href='sign.html'
+            } else {
+	            $.ajax({
+	                type: 'GET',
+	                url:'ticket/getUserTickets',
+	                data:data,
+	                dataType: 'json',
+	                success:function(data){
+	                	translate(data['return_code'],get_user_tickets_fn,data)
+	                }
+	            })
+			}
+        })
+		$(document).bind('pagebeforechange',function(event,data){
+            var url=$.mobile.path.parseUrl(data.toPage).hash;
+            if(url!=undefined&&url.length>17&&url.substring(0,17)=='#myTicketDescPage'){
+                var id=url.substring(17);
+                $.ajax({
+                    type: 'GET',
+                    url:'/ticket/getMyTicketDetail',
+                    data:{'id':id,'auth_token':auth_token},
+                    dataType: 'json',
+                    success:function(data){
+                        if(data['msg']=='success'){
+                            data1=data['data'][0]
+                            actual_price=data1['origin_price']-data1['equal_price']
+                            $('#myTicketDescPage .mtd_name').html(data1['name']);
+                            $('#myTicketDescPage .mtd_equal_price').html(data1['symbol']+' '+data1['equal_price']);
+                            $('#myTicketDescPage .mtd_origin_price').html(data1['symbol']+' '+data1['origin_price']);
+                            $('#myTicketDescPage .mtd_actual_price').html(data1['symbol']+' '+actual_price);
+                            $('#myTicketDescPage .mtd_validity_time').html(data1['validity_start']+'~'+data1['validity_end']);
+                            $('#myTicketDescPage .mtd_code').html(data1['code']);
+                            $('#myTicketDescPage .mtd_merchant_name').html(data1['merchant']['name']);
+                            $('#myTicketDescPage .mtd_merchant_name_en').html(data1['merchant']['name_en']);
+                            $('#myTicketDescPage .mtd_phone').html(data1['merchant']['phone']);
+                            $('#myTicketDescPage .mtd_address').html(data1['merchant']['address']);
+                            $('#myTicketDescPage .mtd_instruction').html(data1['instruction']);
+                            $('#myTicketDescPage .my_ticket_merchant_id').attr('href','merchant_desc.html?merchant_id='+data1['merchant']['id']+'&city_code=')
+                        }else{
+                        	myAlert('请求失败')
+                        }
+                    }
+                })
+                $.mobile.changePage($('#myTicketDescPage'),{dataUrl:data.toPage,'transition':'slide'});
+                event.preventDefault()
+            }
+        })
+		</script>
+	    <div data-role="header" data-theme="f" data-position="fixed">
+	    	<!-- href="index.html"  data-ajax="false" data-transition="slide" data-direction="reverse" -->
+	    	<div><a href="/" data-ajax="false" data-transition="slide" data-direction="reverse" class="wy-header-rl wy-header-left"><img class="left_navbar" src="images/btn_topbar_meun.png"></a></div>
+	        <h1>我的劵</h1>
+	    </div>
+	    <div data-role="content" class="gray-back pd10">
+	        <div data-role="controlgroup" data-type="horizontal" class="horizontal-button-group">
+	            <label for="allTicket">全部</label>
+	            <input type="radio" id="allTicket" name="ticketstatus" value="" onclick="ticket_radio_click('')" checked>
+	            <label for="noUseTicket">未使用</label>
+	            <input type="radio" id="noUseTicket" name="ticketstatus" onclick="ticket_radio_click(0)" value="0">
+	            <label for="hasUseTicket">已使用</label>
+	            <input type="radio" id="hasUseTicket" name="ticketstatus" onclick="ticket_radio_click(1)" value="1">
+	            <label for="hasExpiredTicket">已过期</label>
+	            <input type="radio" id="hasExpiredTicket" name="ticketstatus" onclick="ticket_radio_click(2)" value="2">
+	        </div>
+	        <div id="ticket-control-content">
+	        	<div id="my-ticket-0">
+	        	</div>
+	        	<div id="my-ticket-1">
+	        	</div>
+	        	<div id="my-ticket-2">
+	        	</div>
+	        </div>
+	    </div>
+	    <script type="text/javascript">
+	    	function ticket_radio_click(type){
+				if(typeof(type)=='string'){
+					$("#my-ticket-0").show();
+					$("#my-ticket-1").show();
+					$("#my-ticket-2").show();
+				}else{
+					if(type==0){
+						$("#my-ticket-0").show();
+						$("#my-ticket-1").hide();
+						$("#my-ticket-2").hide();
+					}else if(type==1){
+						$("#my-ticket-1").show();
+						$("#my-ticket-0").hide();
+						$("#my-ticket-2").hide();
+					}else if(type==2){
+						$("#my-ticket-2").show();
+						$("#my-ticket-1").hide();
+						$("#my-ticket-0").hide();
+					}
+				} 
+			}
+	    </script>
+	</div>
+	<div data-role="page" id="myTicketDescPage" class="general-page" data-theme="f" data-dom-cache="true">
+	    <div data-role="header" data-theme="f" data-position="fixed">
+	        <a href="#" data-rel="back" data-corners="false"><img class="left-normal" src="images/return.png"></a>
+	        <h1>劵详情</h1>
+	    </div>
+	    <div data-role="content" class="gray-back">
+	        <div class="general-content">
+	            <div class="customer-panel ui-grid-f">
+	                <div class="rectangle-panel-arrow">
+	                    <img src="images/ticket_0.png">
+	                </div>
+	                <h3 class="mtd_name mb10"></h3>
+	                <div class="ui-grid-20 mb10">
+	                    <div class="ui-block-a">
+	                        <p class="text-highlight mb2">产品原价</p>
+	                        <p class="light-color mtd_origin_price"></p>
+	                    </div>
+	                    <div class="ui-block-b text-highlight">-</div>
+	                    <div class="ui-block-c text_red">
+	                        <strong class="mb2">抵用</strong>
+	                        <p class="mtd_equal_price"></p>
+	                    </div>
+	                    <div class="ui-block-d text-highlight">=</div>
+	                    <div class="ui-block-e">
+	                        <p class="text-highlight mb2">实际消费只需</p>
+	                        <p class="light-color mtd_actual_price"></p>
+	                    </div>
+	                </div>
+	                <p class="light-color">有效期 <span class="mtd_validity_time"></span></p>
+	            </div>
+	            <p class="back-highlight consumer-code">消费码  <span class="font16 mtd_code"></span></p>
+	        </div>
+	        <div class="white-panel ui-grid-f list-line">
+	             <div class="ui-block-a">
+	                <label class="pull-left">商家</label>
+	                <div class="pull-left">
+	                    <p class="light-color mtd_merchant_name"></p>
+	                    <p class="light-color mtd_merchant_name_en"> LLC</p>
+	                </div>
+	            </div>
+	             <div class="ui-block-b"><a class="my_ticket_merchant_id" href="#" data-ajax="false" data-role="button" data-shadow="false">商家详情</a></div>
+	        </div>
+	        <div class="white-panel ui-grid-f list-line">
+	             <div class="ui-block-a">
+	                <label class="pull-left">电话</label>
+	                <p class="pull-left light-color mtd_phone"></p>
+	            </div>
+	             <!-- <div class="ui-block-b"><a href="#" data-role="button" data-shadow="false">立即联系</a></div> -->
+	        </div>
+	        <div class="white-panel ui-grid-f mb10">
+	             <div class="ui-block-a">
+	                <label class="pull-left">地址</label>
+	                <p class="pull-left light-color mtd_address"></p>
+	            </div>
+	             <div class="ui-block-b"><a href="#" data-role="button" data-shadow="false">查看地图</a></div>
+	        </div>
+	        <div class="white-panel list-line last">
+	            <h5>购买须知</h5>
+	            <p class="light-color mtd_instruction"></p>
+	        </div>
+	    </div>
+	</div>
+	<div class="ui-loader-background"> </div>
+</body>
+</html>

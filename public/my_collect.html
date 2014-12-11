@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>我的收藏</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+<script type="text/javascript" charset="utf-8" src="/js/iscroll.js"></script>
+<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="js/mobile_init.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="js/global.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+</head>
+<body>
+    <div data-role="page" id="myCollectPage" data-theme="f"  data-dom-cache="true" >
+        <script type="text/javascript">
+        var myScroll,pullUpEl, pullUpOffset, generatedCount = 0;
+        var tmp_list_data=[];
+        //默认显示5条数据
+        var pull_up_number=5;
+        function my_collect_fn(data){
+            list_data=data['data']
+            tmp_list_data=list_data
+            listr = '';
+            for (i = 0; i < 5; i++) {
+                if(i<list_data.length){
+                    id            = list_data[i]['id'];
+                    img           = list_data[i]['image'];
+                    name          = list_data[i]['name'];
+                    price         = list_data[i]['price'];
+                    equal_price   = list_data[i]['equal_price'];
+                    origin_price  = list_data[i]['origin_price'];
+                    symbol        = list_data[i]['symbol'];
+                    merchant_name = list_data[i]['merchant']['name'];
+
+                    listr +='<li id="li_' + id + '" class="clearfix">'
+                    listr +=    '<div class="pull-left collect-check" style="display:none">'
+                    listr +=        '<input type="checkbox" id="checkbox_'+id+'" name="collect_delete" value="'+id+'" class="regular-checkbox" />'
+                    listr +=        '<label for="checkbox_'+id+'"></label>'
+                    listr +=    '</div>'
+                    listr +=    '<a class="right_info" data-ajax="false" href="card.html?card=' + id + '&city_code=">'
+                    listr +=        '<div class="pull-left mr6">'
+                    if(img){
+                        listr +=            '<img class="default-index-back" width="112" height="75" src=' + img + '>'
+                    }else{
+                        listr +=            '<img width="112" height="75" src=images/inner.png>'
+                    }
+                    listr +=        '</div>'
+                    listr +=        '<div class="clearfix">'
+                    listr +=            '<h2>' + name + '</h2>'
+                    listr +=            '<p class="price">' + merchant_name + '</p>'
+                    listr +=            '<p class="pull-left"><span class="equal_price">' + price + '</span>元</p>'
+                    listr +=            '<p class="pull-right last">'
+                    listr +=                '<span class="origin_price">可抵用 </span>'
+                    listr +=                '<span>' + symbol + ' '+origin_price + '</span>'
+                    listr +=            '</p>'
+                    listr +=        '</div>'
+                    listr +=    '</a>'
+                    listr +='</li>'
+                }
+            }
+            $('#contentList1').append(listr);
+        }
+        $('#myCollectPage').live('pagebeforeshow',function(){
+            outside=localStorage.getItem('outside')
+            if(outside==null){outside=0}
+            auth_token=localStorage.getItem('auth_token')
+            data = {
+                'outside'       :outside,
+                'return_count'  : 1000,
+                'start_index'   : 0,
+                'auth_token'    : auth_token
+            };
+            if (auth_token == ''||auth_token==null) {
+                   window.location.href='sign.html'
+            } else {
+                $.ajax({
+                    type: 'GET',
+                    url:'collect/myCollect',
+                    data:data,
+                    dataType: 'json',
+                    success:function(data){
+                        translate(data['return_code'],my_collect_fn,data)
+                    }
+                })
+            }  
+            setTimeout(loaded2, 200); 
+        })
+        function pullUpAction () {
+            /*下拉刷新时,一次刷新2条数据*/
+            if(pull_up_number<tmp_list_data.length){
+                setTimeout(function () { 
+                    listr = '';
+                    for (i = pull_up_number; i < pull_up_number+2; i++) {
+                        if(i<tmp_list_data.length){
+                            id            = tmp_list_data[i]['id'];
+                            img           = tmp_list_data[i]['image'];
+                            name          = tmp_list_data[i]['name'];
+                            price         = tmp_list_data[i]['price'];
+                            equal_price   = tmp_list_data[i]['equal_price'];
+                            origin_price  = tmp_list_data[i]['origin_price'];
+                            symbol        = tmp_list_data[i]['symbol'];
+                            merchant_name = tmp_list_data[i]['merchant']['name'];
+
+                            listr +='<li id="li_' + id + '" class="clearfix">'
+                            if($('#myCollectPage #is_show_del').html()=='编辑'){
+                                listr +=    '<div class="pull-left collect-check" style="display:none">'
+                            }else{
+                                listr +=    '<div class="pull-left collect-check">'
+                            }
+                            listr +=        '<input type="checkbox" id="checkbox_'+id+'" name="collect_delete" value="'+id+'" class="regular-checkbox" />'
+                            listr +=        '<label for="checkbox_'+id+'"></label>'
+                            listr +=    '</div>'
+                            listr +=    '<a class="right_info" data-ajax="false" href="card.html?card=' + id + '&city_code=">'
+                            listr +=        '<div class="pull-left mr6">'
+                            if(img){
+                                listr +=            '<img class="default-index-back" width="112" height="75" src=' + img + '>'
+                            }else{
+                                listr +=            '<img width="112" height="75" src=images/inner.png>'
+                            }
+                            listr +=        '</div>'
+                            listr +=        '<div class="clearfix">'
+                            listr +=            '<h2>' + name + '</h2>'
+                            listr +=            '<p class="price">' + merchant_name + '</p>'
+                            listr +=            '<p class="pull-left"><span class="equal_price">' + price + '</span>元</p>'
+                            listr +=            '<p class="pull-right last">'
+                            listr +=                '<span class="origin_price">可抵用 </span>'
+                            listr +=                '<span>' + symbol + ' '+origin_price + '</span>'
+                            listr +=            '</p>'
+                            listr +=        '</div>'
+                            listr +=    '</a>'
+                            listr +='</li>'
+                        }
+                    }
+                    $('#contentList1').append(listr);
+                    myScroll.refresh();
+                    pull_up_number+=2;
+                }, 1000); 
+            }else{
+                myScroll.refresh();
+            }
+        } 
+        </script>
+        <div data-role="header" data-theme="f" data-position="fixed" data-tap-toggle="false">
+            <a href="/" data-ajax="false" data-corners="false" data-transition="slide" data-direction="reverse" class="wy-header-rl wy-header-left"><img class="left_navbar" src="images/btn_topbar_meun.png"></a>
+            <h1>我的收藏</h1>
+            <a id="is_show_del" onclick="is_show_del(this)" class="nolinktext edit-text" href="#" data-role="none">编辑</a>
+        </div>
+
+        <div data-role="content" class="overflow-hidden">  
+            <div id="wrapperContent1" class="wrapper loadcontent" style="top:50px;">
+                <div id="scrollerContent1" class="scroller">
+                    <ul data-role="listview" id="contentList1">  
+                    </ul>
+                    <div id="pullUp" class="hide">
+                        <span class="pullUpIcon"></span><span class="pullUpLabel">上拉加载更多...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-content" style="display:none">
+            <a href="#" data-rel="popup" data-position-to="window" onclick="go_del()" data-role="button" class="btn">删除收藏</a>
+        </div>
+        <script type="text/javascript">
+            function is_show_del(){
+                $is_show_del_text=$('#myCollectPage #is_show_del').html()
+                if($is_show_del_text=='编辑'){
+                    $('#myCollectPage #is_show_del').html('完成')
+                    $('#myCollectPage .collect-check').show();
+                    $('#myCollectPage .footer-content').show();
+                }else{
+                    $('#myCollectPage #is_show_del').html('编辑')
+                    $('#myCollectPage .collect-check').hide();
+                    $('#myCollectPage .footer-content').hide();
+                }
+            }
+            function cancel_collect_fn(data_str){
+                split_data=data_str.split('or')
+                for(i=0;i<split_data.length;i++){
+                    $('#li_'+split_data[i]).remove()
+                }
+                myAlert('删除收藏成功')
+            }
+            function go_del(){
+                var str="";
+                $("input[name='collect_delete']:checkbox").each(function(){ 
+                    if($(this).attr("checked")){str += $(this).val()+"or"}
+                })
+                data_str=str.substr(0,str.length-2)
+                if (auth_token == ''||auth_token==null) {
+                    window.location.href='sign.html'
+                } else {
+                    $.ajax({
+                        type: 'post',
+                        url: '/collect/cancelCollect',
+                        data: {'collect_id':data_str,'auth_token':auth_token},
+                        dataType: 'json',
+                        success: function(data) {
+                            translate(data['return_code'],cancel_collect_fn,data_str)
+                        }
+                    })
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>上传头像</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+</head>
+<body>
+    <div data-role="dialog" id="img_dialog">
+        <div data-role="header">
+            <h2>上传头像</h2>
+        </div>
+        <div data-role="content" class="ui-content general-content">
+            <img id="loading"  src="images/loading.gif" style="display:none">
+            <form  enctype="multipart/form-data" method="POST" data-ajax="false">  
+                <input type="file" id="uploadFile" name="image"/>  
+                <div class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <!-- <input data-theme="a" type="button" value="确定" onclick="ajaxFileUpload()"/> -->
+                        <a data-theme="a" data-role="button" href="###" id="btnUpload">确定</a>
+                    </div>
+                    <div class="ui-block-b">
+                        <a data-theme="a" data-rel="back" id="close_dialog" data-role="button" href="#">取消</a>
+                    </div>
+                </div> 
+            </form> 
+        </div>
+        <script type="text/javascript"> 
+            function upload_image_fn(data){
+                img_url=data['data'][0]['imageUrl'];
+                localStorage.setItem('user_header_img',img_url)
+                /*$('.ui-dialog').dialog('close');*/
+                /*$('#userEditPage .image').attr('src',img_url);*/
+                window.location.href='edit_user.html';
+            }
+
+            $(document).ready(function(){
+                $("#btnUpload").bind("tap", function(event) {
+                    auth_token=localStorage.getItem('auth_token');
+                    if (auth_token == ''||auth_token==null) {
+                           window.location.href='sign.html'
+                    } else {
+                        var imgPath = $("#uploadFile").val(); 
+                        //判断是否有选择上传文件  
+                        if (imgPath == "") {  
+                            myAlert("请选择上传图片！");  
+                            return;  
+                        }  
+                        //判断上传文件的后缀名  
+                        var strExtension = imgPath.substr(imgPath.lastIndexOf('.') + 1).toLowerCase();  
+                        if (strExtension != 'jpg' && strExtension != 'gif' && strExtension != 'jpeg' && strExtension != 'png' && strExtension != 'bmp') {  
+                            myAlert("请选择图片文件");  
+                            return;  
+                        }  
+                        $("#loading").ajaxStart(function(){
+                            $(this).show();
+                        }).ajaxComplete(function(){
+                            $(this).hide();
+                        });
+                        $.ajaxFileUpload({
+                            url:'user/uploadImage',
+                            secureuri:false,
+                            fileElementId:'uploadFile',
+                            dataType: 'json',
+                            data:{'auth_token':auth_token},
+                            success: function (data, status){
+                                translate(data['return_code'],upload_image_fn,data)
+                            },error: function (data, status, e){
+                                myAlert("上传失败，请检查网络后重试"); 
+                            }
+                        })  
+                    }
+                    event.preventDefault()
+                });  
+            });
+        </script>  
+    </div>
+</body>
+</html>

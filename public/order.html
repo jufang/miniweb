@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>卡券详情</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="js/mobile_init.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="js/global.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+
+</head>
+<body>
+    <div data-role="page" id="orderPayment" class="general-page"  data-theme="f" data-dom-cache="true">
+        <input type="hidden" id="s_pic" name="price">
+        <script type="text/javascript">
+            function order_fn(data){
+                var pay_type = data['data'][0]['pay_type'],
+                    pay_data = data['data'][0]['pay_data'];
+                    if(pay_type == 1){
+                        var div = $('<div style="display:none"></div>');
+                        div.empty();
+                        div.appendTo('document');
+                        pay_data = pay_data.replace("<script>document.forms['alipaysubmit'].submit();<\/script>", '');
+                        $(pay_data).appendTo(div);
+                        $('form', div).submit();
+                    }else{
+                        /*'<embed type="application/x-unionpayplugin" uc_plugin_id="unionpay" height="53" width="178" paydata='+pay_data+'>'*/
+                        var isiOS = navigator.userAgent.match('iPad')|| navigator.userAgent.match('iPhone')|| navigator.userAgent.match('iPod'), 
+                            isAndroid = navigator.userAgent.match('Android')||navigator.userAgent.match('Linux');
+
+                        var openUrl = 'uppay://uppayservice/?style=token&paydata='+pay_data;
+                        document.location=openUrl;
+                        is_download=localStorage.getItem('is_download')
+                        if(is_download==''||is_download==null){
+                           if(confirm('检测到您没有下载银联手机支付服务控件,您现在需要下载吗?')){
+                                if(isiOS){
+                                    document.location='http://mobile.unionpay.com/getclient?platform=ios&type=securepayplugin'
+                                }else{
+                                    document.location='http://mobile.unionpay.com/getclient?platform=android&type=securepayplugin'
+                                }
+                                localStorage.setItem('is_download',true)
+                            } 
+                        }
+                        // var time = (new Date()).getTime();
+                        // setTimeout(function(){
+                        //     var now = (new Date()).getTime();
+                        //     if((now - time)<400) {
+                        //         if(confirm('检测到您没有下载银联手机支付服务控件,您现在需要下载吗?')){
+                        //             if(isiOS){
+                        //                 document.location='http://mobile.unionpay.com/getclient?platform=ios&type=securepayplugin'
+                        //             }else{
+                        //                 document.location='http://mobile.unionpay.com/getclient?platform=android&type=securepayplugin'
+                        //             }
+                        //         }
+                        //     }
+                        // },300)
+                    }
+            }
+            $('#orderPayment').live('pagebeforeshow',function(event, data){
+                var d = new Date();                  
+                d.setDate(d.getDate()+3);
+                $('#mydate').val(d.format("yyyy-MM-dd"));
+                outside=localStorage.getItem('outside')
+                if(outside==1){
+                    $('#outside_use_time').hide();
+                    $('#outside_phone').hide();
+                }else{
+                    $('input[name="phone"]').val(localStorage.getItem('phone'))
+                }
+                if(outside==null){outside=0}
+                if(window.location.search){
+                    list=getUrlParam(decodeURI(window.location.search))
+                    auth_token=localStorage.getItem('auth_token')
+                    order_payment_id = list[0];
+                    price=list[1];
+                    $('#s_pic').val(price);
+                    card_name=list[2];
+                    qty=$('input[name="qty"]').val();
+                    number = price * qty;
+                    if (qty > 1) {$('.mini_qty_add .minus').css('background-color', '#3dc2f7')}
+                    $('#orderPayment .pay_product_name').html(card_name);
+                    $('#orderPayment .pay_product_price').html(price);
+                    $('#orderPayment .show_pay_price').html(Math.round(number * 100) / 100);
+                    $('#comfirm_payment_btn').off('tap');
+                    $('#comfirm_payment_btn').on('tap', function() {
+                        use_time=$('input[name="mydate"]').val()
+                        phone=$('input[name="phone"]').val()
+                        data1={
+                            'ticket_id'     : order_payment_id,
+                            'auth_token'    : auth_token,
+                            'price'         : price,
+                            'num'           : $('input[name="qty"]').val(),
+                            'pay_type'      : $('input[name="paytype"]:checked').val(),
+                            'order_name'    : card_name,
+                            'outside'       :outside
+                        }
+                        if (auth_token == ''||auth_token==null) {
+                               window.location.href='sign.html'
+                        }else{
+                            if(outside==0){
+                                if(!use_time){myAlert('请点击右侧日期按钮，选择使用日期');return false;}
+                                if(!phone){myAlert('请输入真实的手机号');return false;}
+                                data1['phone']=phone;
+                                data1['use_time']=use_time;
+                            }
+                            $.ajax({
+                                type: 'post',
+                                url: '/order/order',
+                                data: data1,
+                                dataType: 'json',
+                                success: function(data) {
+                                    translate(data['return_code'],order_fn,data)
+                                }
+                            })
+                        }  
+                    })
+                }
+            })
+
+            function change_value(obj){
+                var re=/^[1-9]\d*$/;
+                if(re.test(obj.value)){
+                    $(".qty").val(obj.value)
+                    $('#orderPayment .show_pay_price').html(Math.round($('.qty').val()*$('#s_pic').val() * 100) / 100)
+                }else{
+                    qty_val=$('#orderPayment .show_pay_price').text()/$('#s_pic').val()
+                   $('.qty').val(Math.round(qty_val))
+                } 
+            }
+            function plus(n) {
+                 var n = parseInt(n);
+                 n = n + 1;
+                 if (n > 1) {
+                     $('.mini_qty_add .minus').css('background-color', '#3dc2f7');
+                 }
+                 $(".qty").val(n);
+                 $('#orderPayment .show_pay_price').html(Math.round($('#s_pic').val() * $('.qty').val() * 100) / 100);
+            }
+            function minus(n) {
+                 var n = parseInt(n);
+                 if (n > 1) {
+                     n = n - 1;
+                     $(".qty").val(n);
+                 } else {
+                     $('.mini_qty_add .minus').css('background-color', '#ccc')
+                 }
+                 $('#orderPayment .show_pay_price').html(Math.round($('#s_pic').val() * $('.qty').val() * 100) / 100)
+            }
+        </script>
+        <div data-role="header" data-theme="f" data-position="fixed">
+            <a href="#" data-rel="back" data-corners="false"><img class="left-normal" src="images/return.png"></a>
+            <h1>订单支付</h1>
+        </div>
+        <div data-role="content" class="card-content overflow-hidden">   
+            <div class="panel-title">订单信息</div>
+            <div class="white-panel ui-grid-1-3 list-line">
+                <div class="ui-block-a">商品名称</div>
+                <div class="ui-block-b pay_product_name text-left" style="font-size:16px;font-weight:bold;"></div>
+            </div>
+            <div class="white-panel ui-grid-1-3 list-line">
+                 <div class="ui-block-a">单价</div>
+                 <div class="ui-block-b text-right"><span class="font30 pay_product_price"></span><span class="light-color">元</span></div>
+            </div>
+            <div class="white-panel ui-grid-1-3 list-line">
+                <div class="ui-block-a">数量</div>
+                <div class="ui-block-b mini_qty_add">
+                    <a href="javascript:void(0)" class="plus clearfix" data-role="button">+</a>
+                    <input type="text" value="1" name="qty" style="width:60px;border:1px solid #ccc;" onkeyup="change_value(this);" class="clearfix qty">
+                    <a href="javascript:void(0)" class="minus clearfix" data-role="button" style="background-color:#ccc">-</a>
+                </div>
+                <script type="text/javascript">
+                $(".minus").on('tap',function(){minus($(".qty").val());})       
+                $(".plus").on('tap',function(){plus($(".qty").val());}) 
+                </script>
+            </div>
+            <div class="white-panel ui-grid-1-3">
+                  <div class="ui-block-a">应付金额</div>
+                 <div class="ui-block-b text-right"><span class="font30 text_red show_pay_price"></span><span class="light-color">元</span></div>
+            </div>
+
+            <div class="white-panel ui-grid-1-3" id="outside_use_time">
+                  <div class="ui-block-a">使用日期</div>
+                 <div class="ui-block-b">
+                   <input name="mydate" id="mydate" type="date" data-role="datebox" data-options='{"mode": "calbox"}'>
+                </div>
+            </div>
+            <div class="white-panel ui-grid-1-3"  id="outside_phone">
+                <div class="ui-block-a">手机</div>
+                <div class="ui-block-b">
+                    <input class="no-border-input" data-role="none" type="tel" name="phone" placeholder="请输入真实手机号">
+                </div>
+            </div>
+
+            <div class="panel-title">支付方式</div>
+            <div class="white-panel ui-grid-f list-line">
+                <label for="zhifubao">支付宝</label>
+                <input type="radio" id="zhifubao" name="paytype" value="1" checked>
+            </div>
+            <div class="white-panel ui-grid-f list-line">
+                <label for="wangyin">网银</label>
+                <input type="radio" id="wangyin" name="paytype" value="2">
+            </div>
+        </div>    
+        <div data-role="footer" data-position="fixed">
+            <a href="#" data-role="button" class="large-btn" id="comfirm_payment_btn">确认支付</a>
+        </div>
+    </div>
+    <!-- <div class="ui-loader-background"> </div> -->
+</body>
+</html>
